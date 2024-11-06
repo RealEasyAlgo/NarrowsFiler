@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Drop & Reformat</title>
+    <style>
+        #drop-zone {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            margin: 50px auto;
+            width: 50%;
+            transition: background-color 0.3s;
+        }
+        #drop-zone.dragover {
+            background-color: #f0f8ff;
+        }
+        #download-link {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="slideshow-container">
+            <div class="slide fade">
+                <img src="banner1.png" alt="Slide 1">
+            </div>
+            <div class="slide fade">
+                <img src="banner2.png" alt="Slide 2">
+            </div>
+            <div class="slide fade">
+                <img src="banner3.png" alt="Slide 3">
+            </div>
+            <!-- Add more slides as needed -->
+        </div>
+    </header>
+    <div id="drop-zone">Drag and drop a file here, or click to upload</div>
+    <a id="download-link" download="reformatted-file.txt">Download Reformatted File</a>
+    <input type="file" id="file-input" style="display: none;">
+
+    <script type="module">
+        // File drop zone element
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const downloadLink = document.getElementById('download-link');
+
+        // Allow clicking on the drop zone to upload a file
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        // Handle file input change
+        fileInput.addEventListener('change', handleFile);
+
+        // Handle drag and drop events
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) handleFile({ target: { files: [file] } });
+        });
+
+        // Function to handle file processing
+        async function handleFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const text = await file.text(); // Read the file content
+            const reformattedText = text.toUpperCase(); // Example processing: convert to uppercase
+
+            // Create a Blob and a download link
+            const blob = new Blob([reformattedText], { type: 'text/plain' });
+            downloadLink.href = URL.createObjectURL(blob);
+            downloadLink.style.display = 'block';
+        }
+
+        let currentIndex = 0;
+        function showSlides() {
+            let slides = document.querySelectorAll(".slide");
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            currentIndex++;
+            if (currentIndex > slides.length) { currentIndex = 1; }
+            slides[currentIndex - 1].style.display = "block";
+            setTimeout(showSlides, 3000); // Change image every 3 seconds
+        }
+        showSlides();
+
+    </script>
+</body>
+</html>

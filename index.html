@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Simple Image Slideshow</title>
+        <link rel="stylesheet" href="styles.css">
+
+        <script>
+
+            function formatDate(date) {
+                let year = date.getFullYear();
+                let month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+                let day = String(date.getDate()).padStart(2, '0');
+
+                return `${year}/${month}/${day}`;
+            }
+
+            function getRadioLabel(value) {
+                // Find the input element by its value
+                let radioInput = document.querySelector(`input[type="radio"][name="option"][value="${value}"]`);
+                if (radioInput) {
+                    return { "obj": radioInput, "lbl": radioInput.closest('label')}
+                }
+                return null;
+            }
+
+            function changeRadioLabelText(value, newText) {
+                const { obj, lbl } = getRadioLabel(value);
+                console.log(`obj: ${obj}, lbl: ${lbl}`);
+                if (lbl) {
+                    // Replace the text inside the label with the new text
+                    lbl.textContent = newText;
+
+                    // Ensure the input remains in the label
+                    lbl.prepend(obj);
+                }
+            }
+
+            // function changeRadioLabelText(value, newText) {
+            //     // Find the input element by its value
+            //     let radioInput = document.querySelector(`input[type="radio"][name="option"][value="${value}"]`);
+                
+            //     if (radioInput) {
+            //         // Update the text content of the associated label
+            //         let label = radioInput.closest('label');
+            //         if (label) {
+            //             // Replace the text inside the label with the new text
+            //             label.textContent = newText;
+
+            //             // Ensure the input remains in the label
+            //             label.prepend(radioInput);
+            //         }
+            //     }
+            // }
+
+            function getFirstDayOfMonth() {
+              const today = new Date();
+              const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+              return `${firstDay.getFullYear()}/${String(firstDay.getMonth() + 1).padStart(2, '0')}/${String(firstDay.getDate()).padStart(2, '0')}`; 
+            }    
+
+            function getSundayOfWeek() {
+              let daysToSunday = "";
+              let dayOfWeek = "";
+              const today = new Date();
+              dayOfWeek = today.getDay(); // 0 (Sunday) to 6 (Saturday)
+              // console.log(dayOfWeek);
+              if (dayOfWeek != 0) {
+                  daysToSunday = -7 - ((dayOfWeek - 7) % 7); // Calculate days until Sunday
+              }
+              // console.log(daysToSunday);
+
+              const sunday = new Date(today.getTime() + daysToSunday * 24 * 60 * 60 * 1000);
+              return `${sunday.getFullYear()}/${String(sunday.getMonth() + 1).padStart(2, '0')}/${String(sunday.getDate()).padStart(2, '0')}`; 
+              // return `${sunday.getFullYear()}/${sunday.getMonth() + 1}/${sunday.getDate()}`;
+            }
+
+            function toggleTextField() {
+                const textField = document.getElementById('namedField');
+                const namedRadio = document.querySelector('input[type="radio"][value="named"]');
+                textField.style.display = namedRadio.checked ? 'block' : 'none';
+            }
+
+            function processFile(data) {
+                let sectionsText = document.getElementById("sections").value;
+                // console.log("Text Area Content:", sectionsText);
+
+                // Get the selected radio button value
+                let selectedRadioValue = document.querySelector('input[name="option"]:checked');
+                if (selectedRadioValue) {
+                    console.log(`Selected Radio Option: ${selectedRadioValue.value}  (${selectedRadioValue.closest('label').textContent })`);
+                } else {
+                    console.log("No radio option selected");
+                }
+
+                // Get the value of the namedField input
+                let namedFieldValue = document.getElementById("namedField").value;
+                // console.log("Named Field Value:", namedFieldValue);
+
+                // Get the selected value from the dropdown list
+                let dropdownValue = document.getElementById("dropdown").value;
+                // console.log("Dropdown Value:", dropdownValue);
+
+                let result = ""
+                let combined = sectionsText + data
+                // console.log(`combined : ${combined}`);
+
+                const replacedData = combined.split('\n').map(line => {
+                    const match = line.match(/^([^:]+):(.*)$/);
+                    return match ? `${dropdownValue}:${match[2]}` : line;
+                }).join('\n');
+                // console.log(`replacedData : ${replacedData}`);
+                const noLeadingBlanksData = replacedData.replace(/^\s+/gm, '');
+                // console.log(`noLeadingBlanksData : ${noLeadingBlanksData}`);
+                const noBlankLinesData = noLeadingBlanksData.replace(/\n\s*\n/g, '\n');
+                // console.log(`noBlankLinesData : ${noBlankLinesData}`);
+
+                return {
+                    "exchange" : dropdownValue,
+                    "sectionsText" : sectionsText,
+                    "namedFieldValue" : namedFieldValue,
+                    "trendX" : selectedRadioValue.closest('label').textContent,
+                    "payload" : noBlankLinesData,
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <img src="easyalgo2.png" alt="Icon" class="icon">
+            <h1>TradingView Watchlist Tool</h1>
+            <h2>Narrow Pivot Points </h2>
+
+
+            <form>
+                <label for="exchange">File Naming</label>
+                <div class="radio-container">
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="option" value="daily" onchange="toggleTextField()" checked> Daily_YYYY-MM-DD
+                        </label>
+                        <label>
+                            <input type="radio" name="option" value="weekly" onchange="toggleTextField()"> Weekly_YYYY-MM-DD
+                        </label>
+                        <label>
+                            <input type="radio" name="option" value="monthly" onchange="toggleTextField()"> Monthly_YYYY-MM-DD
+                        </label>
+                        <label>
+                            <input type="radio" name="option" value="combo" onchange="toggleTextField()"> Combo_YYYY-MM-DD
+                        </label>
+                        <label>
+                            <input type="radio" name="option" value="named" onchange="toggleTextField()"> -- named --
+                        </label>
+                    </div>
+                </div>
+                <p>
+                </p>
+
+                <input type="text" id="namedField" placeholder="Enter name" class="hidden-text-field" value="Pramod_YYYY/MM/DD.txt">
+                <p>
+                </p>
+                <p>
+                </p>
+
+                <label for="exchange">Your preferred exchange</label>
+                <select id="dropdown" name="cex">
+                    <option value="BINANCE">BINANCE</option>
+                    <option value="BINGX">BINGX</option>
+                    <option value="BITFINEX">BITFINEX</option>
+                    <option value="BITGET">BITGET</option>
+                    <option value="BITHUMB">BITHUMB</option>
+                    <option value="BITKUB">BITKUB</option>
+                    <option value="BITMEX">BITMEX</option>
+                    <option value="BITSTAMP">BITSTAMP</option>
+                    <option value="BLOFIN" selected>BLOFIN</option>
+                    <option value="BYBIT">BYBIT</option>
+                    <option value="COINBASE">COINBASE</option>
+                    <option value="COINEX">COINEX</option>
+                    <option value="CRYPTO">CRYPTO</option>
+                    <option value="CRYPTOCAP">CRYPTOCAP</option>
+                    <option value="EASYMARKETS">EASYMARKETS</option>
+                    <option value="FOREXCOM">FOREXCOM</option>
+                    <option value="GATEIO">GATEIO</option>
+                    <option value="GEMINI">GEMINI</option>
+                    <option value="KRAKEN">KRAKEN</option>
+                    <option value="KUCOIN">KUCOIN</option>
+                    <option value="MEXC">MEXC</option>
+                    <option value="OKX">OKX</option>
+                    <option value="PHEMEX">PHEMEX</option>
+                    <option value="POLONIEX">POLONIEX</option>
+                </select>
+
+                <label for="sections">Optional Section Names</label>
+                <div class="textarea-container">
+                    <textarea id="sections" class="styled-textarea" rows="10">
+###LONG POSITIONS
+###LONG POSITIONS CLOSED
+###SHORT POSITION
+###SHORT POSITIONS CLOSED
+###MISSED ENTRIES
+###INSIDE WEEKLY PIVOT
+###CURIOSITIES
+###NARROWS
+BYBIT:BTCUSDT
+                    </textarea>
+                </div>
+
+                <div id="drop-zone" class="container">Drag and drop a 
+                    <br/><em>"Trend X ( Scanner )"</em>
+                    <br/>file here, 
+                    <br/>OR
+                    <br/>click to upload</div>
+                <a id="download-link" download="reformatted-file.txt">Download Reformatted File</a>
+                <input type="file" id="file-input" style="display: none;">
+
+            </form>
+            <hl/>
+            <div class="footer-container">
+                <div class="footer-links">
+                    <a href="https://www.easyalgoindicators.com/powerfriend" target="_blank">
+                        <img src="easyalgo2.png" alt="Icon" class="tiny-icon">&nbsp;&nbsp;Get started today for free
+                    </a>
+                    <a href="https://x.com/RealEasyAlgo"  target="_blank">
+                        <img src="x.png" alt="Icon" class="tiny-icon">&nbsp;&nbsp;Follow us on X
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="slideshow-container">
+        <!-- <div class="container"> -->
+            <div class="slideshow">
+                <div class="slide">
+                    <img src="image1.png" alt="Slide 1">
+                </div>
+
+                <div class="slide">
+                    <img src="image2.png" alt="Slide 1">
+                </div>
+
+                <div class="slide">
+                    <img src="image1.png" alt="Slide 1">
+                </div>
+            </div>
+        </div>
+
+
+        <script type="module">
+
+            function toggleTextField() {
+                const textField = document.getElementById('namedField');
+                const namedRadio = document.querySelector('input[type="radio"][value="named"]');
+                console.log("...........")
+                textField.style.display = namedRadio.checked ? 'block' : 'none';
+            }
+
+            // File drop zone element
+            const dropZone = document.getElementById('drop-zone');
+            const fileInput = document.getElementById('file-input');
+            const downloadLink = document.getElementById('download-link');
+
+            // Allow clicking on the drop zone to upload a file
+            dropZone.addEventListener('click', () => fileInput.click());
+
+            // Handle file input change
+            fileInput.addEventListener('change', handleFile);
+
+            // Handle drag and drop events
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file) handleFile({ target: { files: [file] } });
+            });
+
+            // Function to handle file processing
+            async function handleFile(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const text = await file.text(); // Read the file content
+                const reformattedText = text.toUpperCase(); // Example processing: convert to uppercase
+                const {exchange, trendX, sectionsText, namedFieldValue, payload} = processFile(text)
+                // console.log(`exchange : ${exchange}`);
+                // console.log(`sectionsText : ${sectionsText}`);
+                // console.log(`namedFieldValue : ${namedFieldValue}`);
+                // console.log(`trendX : ${trendX}`);
+                // console.log(`payload : ${payload}`);
+                let filename = trendX;
+                if (filename.includes("named")) filename = namedFieldValue;
+                if ( ! filename.includes(".txt")) filename = `${filename}.txt`;
+
+                // Create a Blob and a download link
+                const blob = new Blob([payload], { type: 'text/plain' });
+                console.log(`filename :: ${filename}`);
+                downloadLink.setAttribute('download', filename);
+                downloadLink.href = URL.createObjectURL(blob);
+                downloadLink.style.display = 'block';
+            }
+
+            window.onload = function() {
+                const today = new Date();
+                const firstDayOfMonth = getFirstDayOfMonth();
+                const sundayOfWeek = getSundayOfWeek();
+
+                changeRadioLabelText("daily", `Daily_${formatDate(today)}.txt`);
+                changeRadioLabelText("weekly", `Weekly_${getSundayOfWeek()}.txt`);
+                changeRadioLabelText("monthly", `Monthly_${getFirstDayOfMonth()}.txt`);
+                changeRadioLabelText("combo", `Combo_${formatDate(today)}.txt`);
+
+                const file =
+`
+BYBIT:ADAUSDT.P
+BYBIT:APTUSDT.P
+BYBIT:ZKJUSDT.P
+`
+                let result = processFile(file);
+                console.dir(result);
+            };
+
+        </script>
+    </body>
+</html>
