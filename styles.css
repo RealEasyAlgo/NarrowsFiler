@@ -1,3 +1,26 @@
+.styled-button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #333; 
+  /* background-color: #39ff14;  Matching neon green */
+  color: #39ff14; /* Dark color for contrast */
+  border: none;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.styled-button:hover {
+  background-color: #2bff00; /* Slightly lighter neon green on hover */
+  color: #333; /* Slightly lighter neon green on hover */
+}
+
+.styled-button:active {
+  transform: scale(0.98); /* Slightly shrink on click */
+}
+
 #drop-zone {
     border: 2px dashed #ccc;
     border-radius: 10px;
@@ -14,9 +37,9 @@
 #download-link {
     display: none;
 /*    margin: 2px 0 15px;*/
-    color: #b3b3b3;
+    color: #39ff14;
     font-weight: bold;
-    font-size: 1.4rem;
+    font-size: 1.5rem;
 }
 
 
@@ -173,21 +196,6 @@ button:hover {
     background-color: #33cc12;
 }
 
-button {
-    background-color: #39ff14;
-    color: #1c1c1c;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
-    cursor: pointer;
-    margin-top: 15px;
-    font-weight: bold;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: #33cc12;
-}
 
 .radio-container {
     background-color: #333;
