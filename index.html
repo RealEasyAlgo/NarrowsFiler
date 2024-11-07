@@ -19,7 +19,7 @@
                 }
                 const jsonPreferences = JSON.stringify(preferences);
                 setCookie(cookieName, jsonPreferences, 7); // Cookie lasts 7 days
-                alert(`Preferences saved to cookie : ${cookieName}:\n\n${jsonPreferences}`);
+                alert(`Preferences saved to cookie : ${cookieName}:\n  1) Exchange : ${preferences["exchange"]}\n  2) Sections...\n${preferences["sectionsText"]}`);
             }
 
             function replaceTextareaContent(newContent) {
