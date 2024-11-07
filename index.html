@@ -29,7 +29,7 @@
 
             function changeRadioLabelText(value, newText) {
                 const { obj, lbl } = getRadioLabel(value);
-                console.log(`obj: ${obj}, lbl: ${lbl}`);
+                // console.log(`obj: ${obj}, lbl: ${lbl}`);
                 if (lbl) {
                     // Replace the text inside the label with the new text
                     lbl.textContent = newText;
@@ -67,6 +67,20 @@
                 textField.style.display = namedRadio.checked ? 'block' : 'none';
             }
 
+            function trimArrayElements(arr) {
+              return arr.map(element => element.trim());
+            }
+
+            function removeDuplicateLines(multilineString) {
+              // console.log(`multilineString : ${multilineString}`);
+              const linesArray = multilineString.split('\n');
+              const trimmedArray = trimArrayElements(linesArray)
+              const uniqueLinesSet = new Set(trimmedArray);
+              const uniqueLinesArray = Array.from(uniqueLinesSet);
+
+              return uniqueLinesArray.join('\n');
+            }
+
             function processFile(data) {
                 let sectionsText = document.getElementById("sections").value;
                 // console.log("Text Area Content:", sectionsText);
@@ -100,13 +114,14 @@
                 // console.log(`noLeadingBlanksData : ${noLeadingBlanksData}`);
                 const noBlankLinesData = noLeadingBlanksData.replace(/\n\s*\n/g, '\n');
                 // console.log(`noBlankLinesData : ${noBlankLinesData}`);
+                const noDuplicatesData = removeDuplicateLines(noBlankLinesData)
 
                 return {
                     "exchange" : dropdownValue,
                     "sectionsText" : sectionsText,
                     "namedFieldValue" : namedFieldValue,
                     "trendX" : selectedRadioValue.closest('label').textContent,
-                    "payload" : noBlankLinesData,
+                    "payload" : noDuplicatesData,
                 }
             }
         </script>
@@ -116,8 +131,6 @@
             <img src="easyalgo2.png" alt="Icon" class="icon">
             <h1>TradingView Watchlist Tool</h1>
             <h2>Narrow Pivot Points </h2>
-
-
             <form>
                 <label for="exchange">File Naming</label>
                 <div class="radio-container">
@@ -275,7 +288,7 @@ BYBIT:BTCUSDT
 
                 const text = await file.text(); // Read the file content
                 const reformattedText = text.toUpperCase(); // Example processing: convert to uppercase
-                const {exchange, trendX, sectionsText, namedFieldValue, payload} = processFile(text)
+                const { exchange, trendX, sectionsText, namedFieldValue, payload } = processFile(text)
                 // console.log(`exchange : ${exchange}`);
                 // console.log(`sectionsText : ${sectionsText}`);
                 // console.log(`namedFieldValue : ${namedFieldValue}`);
