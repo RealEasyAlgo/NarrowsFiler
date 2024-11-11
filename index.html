@@ -7,207 +7,12 @@
         <title>EasyAlgo Narrows Filer</title>
         <link rel="icon" href="favicon.ico" type="image/x-icon">
         <link rel="stylesheet" href="styles.css">
+        <script src="./js/handleCookies.js" defer></script>
+        <script src="./js/handleFields.js" defer></script>
+        <script src="./js/handleDropZone.js" defer></script>
+        <script src="./js/utils.js" defer></script>
 
-        <script>
-
-
-            function savePreferencesToCookie() {
-                const cookieName = "EA_preferences"
-                const preferences = { 
-                    "sectionsText": document.getElementById("sections").value,
-                    "exchange" : document.getElementById("dropdown").value
-                }
-                const jsonPreferences = JSON.stringify(preferences);
-                setCookie(cookieName, jsonPreferences, 7); // Cookie lasts 7 days
-                alert(`Preferences saved to cookie : ${cookieName}:\n  1) Exchange : ${preferences["exchange"]}\n  2) Sections...\n${preferences["sectionsText"]}`);
-            }
-
-            function replaceTextareaContent(newContent) {
-              const textarea = document.getElementById("sections");
-              textarea.value = newContent;
-            }
-
-            // Function to set a cookie
-            function setCookie(name, value, days) {
-              const date = new Date();
-              date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-              const expires = "expires=" + date.toUTCString();
-              document.cookie = name + "=" + encodeURIComponent(value) + ";" + expires + ";path=/";
-            }
-
-            // Function to get a cookie by name
-            function getCookie(name) {
-              const nameEQ = name + "=";
-              const cookies = document.cookie.split(';');
-              for (let cookie of cookies) {
-                cookie = cookie.trim();
-                if (cookie.indexOf(nameEQ) === 0) {
-                  return decodeURIComponent(cookie.substring(nameEQ.length));
-                }
-              }
-              return null;
-            }
-
-            // Function to save preferences as a cookie after user confirmation
-            function savePreferences(preferences) {
-              // Create the object
-
-              // Show dialog to user
-              const userConsent = confirm(
-                `We'd like to save your preferences:\nExchange: ${preferences.exchange}\nSections Text: ${preferences.sectionsText}\nDo you allow us to save this information as a cookie?`
-              );
-
-              // If user consents, save the cookie
-              if (userConsent) {
-                const jsonPreferences = JSON.stringify(preferences);
-                setCookie("EA_preferences", jsonPreferences, 7); // Cookie lasts 7 days
-                alert("Preferences saved as a cookie.");
-              } else {
-                alert("Preferences were not saved.");
-              }
-            }
-
-            // Function to retrieve the preferences from the cookie
-            function loadPreferences() {
-              const jsonPreferences = getCookie("EA_preferences");
-              if (jsonPreferences) {
-                try {
-                  const preferences = JSON.parse(jsonPreferences);
-                  console.log("Retrieved Preferences:", preferences);
-                  return preferences;
-                } catch (error) {
-                  console.error("Failed to parse preferences JSON:", error);
-                }
-              } else {
-                console.log("No preferences found in cookies.");
-              }
-              return null;
-            }
-
-
-
-
-
-            function selectDropdownItem(value) {
-              const dropdown = document.getElementById("dropdown");
-              dropdown.value = value;
-            }
-
-            function formatDate(date) {
-                let year = date.getFullYear();
-                let month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-                let day = String(date.getDate()).padStart(2, '0');
-
-                return `${year}/${month}/${day}`;
-            }
-
-            function getRadioLabel(value) {
-                // Find the input element by its value
-                let radioInput = document.querySelector(`input[type="radio"][name="option"][value="${value}"]`);
-                if (radioInput) {
-                    return { "obj": radioInput, "lbl": radioInput.closest('label')}
-                }
-                return null;
-            }
-
-            function changeRadioLabelText(value, newText) {
-                const { obj, lbl } = getRadioLabel(value);
-                // console.log(`obj: ${obj}, lbl: ${lbl}`);
-                if (lbl) {
-                    // Replace the text inside the label with the new text
-                    lbl.textContent = newText;
-
-                    // Ensure the input remains in the label
-                    lbl.prepend(obj);
-                }
-            }
-
-            function getFirstDayOfMonth() {
-              const today = new Date();
-              const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-              return `${firstDay.getFullYear()}/${String(firstDay.getMonth() + 1).padStart(2, '0')}/${String(firstDay.getDate()).padStart(2, '0')}`; 
-            }    
-
-            function getSundayOfWeek() {
-              let daysToSunday = "";
-              let dayOfWeek = "";
-              const today = new Date();
-              dayOfWeek = today.getDay(); // 0 (Sunday) to 6 (Saturday)
-              // console.log(dayOfWeek);
-              if (dayOfWeek != 0) {
-                  daysToSunday = -7 - ((dayOfWeek - 7) % 7); // Calculate days until Sunday
-              }
-              // console.log(daysToSunday);
-
-              const sunday = new Date(today.getTime() + daysToSunday * 24 * 60 * 60 * 1000);
-              return `${sunday.getFullYear()}/${String(sunday.getMonth() + 1).padStart(2, '0')}/${String(sunday.getDate()).padStart(2, '0')}`; 
-              // return `${sunday.getFullYear()}/${sunday.getMonth() + 1}/${sunday.getDate()}`;
-            }
-
-            function toggleTextField() {
-                const textField = document.getElementById('namedField');
-                const namedRadio = document.querySelector('input[type="radio"][value="named"]');
-                textField.style.display = namedRadio.checked ? 'block' : 'none';
-            }
-
-            function trimArrayElements(arr) {
-              return arr.map(element => element.trim());
-            }
-
-            function removeDuplicateLines(multilineString) {
-              // console.log(`multilineString : ${multilineString}`);
-              const linesArray = multilineString.split('\n');
-              const trimmedArray = trimArrayElements(linesArray)
-              const uniqueLinesSet = new Set(trimmedArray);
-              const uniqueLinesArray = Array.from(uniqueLinesSet);
-
-              return uniqueLinesArray.join('\n');
-            }
-
-            function processFile(data) {
-                let sectionsText = document.getElementById("sections").value;
-                // console.log("Text Area Content:", sectionsText);
-
-                // Get the selected radio button value
-                let selectedRadioValue = document.querySelector('input[name="option"]:checked');
-                if (selectedRadioValue) {
-                    console.log(`Selected Radio Option: ${selectedRadioValue.value}  (${selectedRadioValue.closest('label').textContent })`);
-                } else {
-                    console.log("No radio option selected");
-                }
-
-                // Get the value of the namedField input
-                let namedFieldValue = document.getElementById("namedField").value;
-                // console.log("Named Field Value:", namedFieldValue);
-
-                // Get the selected value from the dropdown list
-                let dropdownValue = document.getElementById("dropdown").value;
-                // console.log("Dropdown Value:", dropdownValue);
-
-                let result = ""
-                let combined = sectionsText + data
-                // console.log(`combined : ${combined}`);
-
-                const replacedData = combined.split('\n').map(line => {
-                    const match = line.match(/^([^:]+):(.*)$/);
-                    return match ? `${dropdownValue}:${match[2]}` : line;
-                }).join('\n');
-                // console.log(`replacedData : ${replacedData}`);
-                const noLeadingBlanksData = replacedData.replace(/^\s+/gm, '');
-                // console.log(`noLeadingBlanksData : ${noLeadingBlanksData}`);
-                const noBlankLinesData = noLeadingBlanksData.replace(/\n\s*\n/g, '\n');
-                // console.log(`noBlankLinesData : ${noBlankLinesData}`);
-                const noDuplicatesData = removeDuplicateLines(noBlankLinesData)
-
-                return {
-                    "exchange" : dropdownValue,
-                    "sectionsText" : sectionsText,
-                    "namedFieldValue" : namedFieldValue,
-                    "trendX" : selectedRadioValue.closest('label').textContent,
-                    "payload" : noDuplicatesData,
-                }
-            }
-        </script>
+        <script src="./js/main.js" defer></script>
     </head>
     <body>
         <div class="container">
@@ -238,7 +43,7 @@
                 <p>
                 </p>
 
-                <input type="text" id="namedField" placeholder="Enter name" class="hidden-text-field" value="Pramod_YYYY/MM/DD.txt">
+                <input type="text" id="namedField" placeholder="Enter name" class="hidden-text-field" value="Pramod_YYYY/MM/DD.txt" onclick="selectText(this)">
                 <p>
                 </p>
                 <p>
@@ -275,6 +80,8 @@
                 <label for="sections">Optional Section Names</label>
                 <div class="textarea-container">
                     <textarea id="sections" class="styled-textarea" rows="10">
+###REFERENCE
+BYBIT:BTCUSDT
 ###LONG POSITIONS
 ###LONG POSITIONS CLOSED
 ###SHORT POSITION
@@ -283,7 +90,6 @@
 ###INSIDE WEEKLY PIVOT
 ###CURIOSITIES
 ###NARROWS
-BYBIT:BTCUSDT
                     </textarea>
                 </div>
 
@@ -332,69 +138,12 @@ BYBIT:BTCUSDT
 
         <script type="module">
 
-            function toggleTextField() {
-                const textField = document.getElementById('namedField');
-                const namedRadio = document.querySelector('input[type="radio"][value="named"]');
-                console.log("...........")
-                textField.style.display = namedRadio.checked ? 'block' : 'none';
-            }
-
-            // File drop zone element
-            const dropZone = document.getElementById('drop-zone');
-            const fileInput = document.getElementById('file-input');
-            const downloadLink = document.getElementById('download-link');
-
-            // Allow clicking on the drop zone to upload a file
-            dropZone.addEventListener('click', () => fileInput.click());
 
             // Handle file input change
             fileInput.addEventListener('change', handleFile);
 
-            // Handle drag and drop events
-            dropZone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dropZone.classList.add('dragover');
-            });
 
-            dropZone.addEventListener('dragleave', () => {
-                dropZone.classList.remove('dragover');
-            });
-
-            dropZone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropZone.classList.remove('dragover');
-                const file = e.dataTransfer.files[0];
-                if (file) handleFile({ target: { files: [file] } });
-            });
-
-            // Function to handle file processing
-            async function handleFile(event) {
-                const file = event.target.files[0];
-                if (!file) return;
-
-                const text = await file.text(); // Read the file content
-                const reformattedText = text.toUpperCase(); // Example processing: convert to uppercase
-                const { exchange, trendX, sectionsText, namedFieldValue, payload } = processFile(text)
-                // console.log(`exchange : ${exchange}`);
-                // console.log(`sectionsText : ${sectionsText}`);
-                // console.log(`namedFieldValue : ${namedFieldValue}`);
-                // console.log(`trendX : ${trendX}`);
-                // console.log(`payload : ${payload}`);
-                let filename = trendX;
-                if (filename.includes("named")) filename = namedFieldValue;
-                if ( ! filename.includes(".txt")) filename = `${filename}.txt`;
-
-                // Create a Blob and a download link
-                const blob = new Blob([payload], { type: 'text/plain' });
-                console.log(`filename :: ${filename}`);
-                downloadLink.setAttribute('download', filename);
-                downloadLink.href = URL.createObjectURL(blob);
-                downloadLink.style.display = 'block';
-
-                // savePreferences({ exchange, sectionsText })
-            }
-
-            window.onload = function() {
+            window.onload = () => {
                 const today = new Date();
                 const firstDayOfMonth = getFirstDayOfMonth();
                 const sundayOfWeek = getSundayOfWeek();
@@ -411,14 +160,14 @@ BYBIT:BTCUSDT
                 replaceTextareaContent(sectionsText)
 
 
-                const file =
-`
-BYBIT:ADAUSDT.P
-BYBIT:APTUSDT.P
-BYBIT:ZKJUSDT.P
-`
-                // let result = processFile(file);
-                // console.dir(result);
+//                 const file =
+// `
+// BYBIT:ADAUSDT.P
+// BYBIT:APTUSDT.P
+// BYBIT:ZKJUSDT.P
+// `
+//                 let result = processFile(file);
+//                 console.dir(result);
             };
 
         </script>
