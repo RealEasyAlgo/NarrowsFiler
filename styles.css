@@ -1,3 +1,8 @@
+#dateTimeDisplay {
+    font-size: 0.75em; /* Half the base font size */
+    margin-bottom: 2em; /* Spacing equivalent to two line feeds */
+}
+
 .styled-button {
   margin-top: 15px;
   padding: 10px 20px;

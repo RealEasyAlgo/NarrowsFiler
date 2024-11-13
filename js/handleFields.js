@@ -1,14 +1,14 @@
-function replaceTextareaContent(newContent) {
+const replaceTextareaContent = (newContent) => {
   const textarea = document.getElementById("sections");
   textarea.value = newContent;
 }
 
-function selectDropdownItem(value) {
+const selectDropdownItem = (value) => {
   const dropdown = document.getElementById("dropdown");
   dropdown.value = value;
 }
 
-function getRadioLabel(value) {
+const getRadioLabel = (value) => {
     // Find the input element by its value
     let radioInput = document.querySelector(`input[type="radio"][name="option"][value="${value}"]`);
     if (radioInput) {
@@ -17,7 +17,7 @@ function getRadioLabel(value) {
     return null;
 }
 
-function changeRadioLabelText(value, newText) {
+const changeRadioLabelText = (value, newText) => {
     const { obj, lbl } = getRadioLabel(value);
     // console.log(`obj: ${obj}, lbl: ${lbl}`);
     if (lbl) {
@@ -29,13 +29,7 @@ function changeRadioLabelText(value, newText) {
     }
 }
 
-function toggleTextField() {
-    const textField = document.getElementById('namedField');
-    const namedRadio = document.querySelector('input[type="radio"][value="named"]');
-    textField.style.display = namedRadio.checked ? 'block' : 'none';
-}
-
-function toggleTextField() {
+const toggleTextField = () => {
     const textField = document.getElementById('namedField');
     const namedRadio = document.querySelector('input[type="radio"][value="named"]');
     console.log("...........")
@@ -43,6 +37,6 @@ function toggleTextField() {
 }
 
 
-function selectText(input) {
+const selectText = (input) => {
   input.select();
 }
