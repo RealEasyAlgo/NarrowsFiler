@@ -56,7 +56,8 @@ const processFile = data => {
     // console.log(`noBlankLinesData : ${noBlankLinesData}`);
     const noDuplicatesData = removeDuplicateLines(noBlankLinesData)
 
-    const payload = sectionsText + `\n` + noDuplicatesData
+    const pyld = sectionsText + `\n` + noDuplicatesData
+    const payload = pyld.replace(/\n\s*\n/g, '\n');
 
     return {
         "exchange" : dropdownValue,
