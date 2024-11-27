@@ -40,3 +40,10 @@ const toggleTextField = () => {
 const selectText = (input) => {
   input.select();
 }
+
+function toggleNote() {
+  var popup = document.getElementById("myPopup");
+  console.dir(popup)
+  popup.classList.toggle("show");
+}
+

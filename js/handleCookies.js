@@ -30,27 +30,8 @@ const getCookie = (name) => {
   return null;
 }
 
-// Function to save preferences as a cookie after user confirmation
-const savePreferences = (preferences) => {
-  // Create the object
-
-  // Show dialog to user
-  const userConsent = confirm(
-    `We'd like to save your preferences:\nExchange: ${preferences.exchange}\nSections Text: ${preferences.sectionsText}\nDo you allow us to save this information as a cookie?`
-  );
-
-  // If user consents, save the cookie
-  if (userConsent) {
-    const jsonPreferences = JSON.stringify(preferences);
-    setCookie("EA_preferences", jsonPreferences, 7); // Cookie lasts 7 days
-    alert("Preferences saved as a cookie.");
-  } else {
-    alert("Preferences were not saved.");
-  }
-}
-
 // Function to retrieve the preferences from the cookie
-const loadPreferences = () => {
+const loadPreferences = (defaults) => {
   const jsonPreferences = getCookie("EA_preferences");
   if (jsonPreferences) {
     try {
@@ -61,7 +42,56 @@ const loadPreferences = () => {
       console.error("Failed to parse preferences JSON:", error);
     }
   } else {
-    console.log("No preferences found in cookies.");
+    console.log("Default preferences used.");
+    return defaults
   }
   return null;
 }
+
+
+const checkForChanges = () => {
+    console.log("checkForChanges()")
+    const button = document.querySelector('.styled-button');
+    const dropdownValue = document.getElementById('dropdown').value;
+    const textareaValue = document.getElementById('sections').value.trim();
+
+    // Retrieve cookie if it exists
+    const cookieName = "EA_preferences";
+    const cookie = getCookie(cookieName);
+
+    changeRadioLabelText("daily", `Daily_${formatDate(new Date())}_${dropdownValue}.txt`);
+    changeRadioLabelText("weekly", `Weekly_${getSundayOfWeek()}_${dropdownValue}.txt`);
+    changeRadioLabelText("monthly", `Monthly_${getFirstDayOfMonth()}_${dropdownValue}.txt`);
+    changeRadioLabelText("combo", `Combo_${formatDate(new Date())}_${dropdownValue}.txt`);
+
+    if (!cookie) {
+        // No cookie exists, show the button
+        button.style.display = 'block';
+        return;
+    }
+
+    try {
+        const preferences = JSON.parse(cookie);
+
+        let sections = preferences.sectionsText.replace(/\n+$/, '')
+        console.log("preferences.exchange")
+        console.log(preferences.exchange)
+        // Check if values match the cookie
+        if (
+            dropdownValue === preferences.exchange &&
+            textareaValue.trim() === sections.trim()
+        ) {
+            // Values match the cookie, hide the button
+            console.log("hide")
+            button.style.display = 'none';
+        } else {
+            // Values don't match the cookie, show the button
+            console.log("show")
+            button.style.display = 'block';
+        }
+    } catch (error) {
+        console.error("Failed to parse preferences from cookie:", error);
+        // Show button if cookie parsing fails
+        button.style.display = 'block';
+    }
+};

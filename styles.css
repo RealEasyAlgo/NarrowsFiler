@@ -4,17 +4,17 @@
 }
 
 .styled-button {
-  margin-top: 15px;
-  padding: 10px 20px;
-  background-color: #333; 
-  /* background-color: #39ff14;  Matching neon green */
-  color: #39ff14; /* Dark color for contrast */
-  border: none;
-  border-radius: 5px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  transition: background-color 0.3s, transform 0.2s;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #333;
+    color: #39ff14;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s, transform 0.2s;
+    display: none; /* Initially invisible */
 }
 
 .styled-button:hover {
@@ -60,73 +60,45 @@ body {
   justify-content: center;
 }
 
+.main-container {
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    width: 100%; /* Ensure it spans the full width of the page */
+    position: relative; /* Allow children to flow naturally */
+}
+
 
 .textarea-container {
-    width: 70%;
-    max-width: 600px; /* Adjust width as needed */
+    width: 80%;
+    max-width: 650px; /* Adjust width as needed */
     margin: 0 auto; /* Center horizontally */
 }
 
 .styled-textarea {
-    width: 100%;
-    padding: 10px;
+    width: 100%; /* Expand width to nearly fill the styled box */
+    padding: 5px;
     border-radius: 5px;
     border: 1px solid #444;
     background-color: #333;
     color: #d9d9d9;
     outline: none;
     font-size: 0.7rem;
-    resize: none; /* Prevent resizing */
+    resize: none;
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
-    text-align: left; /* Left-align text */
+    text-align: left;
+    height: calc(1.2em * 13); /* Add three lines to the default 10 lines */
 }
-
-.slideshow-container {
-  width: 100%;
-  max-width: 1200px;
-  position: relative;
-  margin-bottom: 20px; 
-}
-
-/* Slideshow */
-.slideshow {
-  width: 100%;
-  position: relative;
-}
-
-.slide {
-  width: 100%;
-  position: absolute;
-  animation: slideShow 12s infinite;
-  opacity: 0;
-}
-
-.slide img {
-  width: 100%;   
-  height: auto;  
-  display: block;
-}
-
-.slide:nth-child(1) { animation-delay: 0s; }
-.slide:nth-child(2) { animation-delay: 4s; }
-.slide:nth-child(3) { animation-delay: 8s; }
-
-@keyframes slideShow {
-  0% { opacity: 0; }
-  8% { opacity: 1; }
-  33% { opacity: 1; }
-  41% { opacity: 0; }
-  100% { opacity: 0; }
-}
-
 
 .container {
     background-color: #2a2a2a;
     border-radius: 15px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
     padding: 20px 40px;
-    max-width: 400px;
-    width: 100%;
+
+    width: 90%; /* Adjust width to scale with the window */
+    max-width: 1200px; /* Add a reasonable maximum width */
+    margin: 0 auto; /* Center the container horizontally */
+
     text-align: center;
 }
 
@@ -134,6 +106,16 @@ body {
 .container h2 {
     color: #39ff14; /* Bright neon green */
     margin-bottom: 15px;
+}
+
+.video-text {
+    font-size: 1.25em;
+    margin-top: 5px;
+    background: linear-gradient(90deg, #00FF00, #FFFFFF, #00FF00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-animation 3s infinite;
+    background-size: 200%;
 }
 
 label {
@@ -201,14 +183,25 @@ button:hover {
     background-color: #33cc12;
 }
 
+.form-row {
+    display: flex; /* Enables side-by-side alignment for first two items */
+    flex-wrap: wrap; /* Allows wrapping for responsive design */
+    gap: 20px; /* Adds space between the two main elements */
+    justify-content: center; /* Centers items horizontally */
+    align-items: flex-start; /* Aligns items to the top */
+    margin-bottom: 20px; /* Adds spacing below the row */
+    position: relative; /* Keeps namedField positioned within this container */
+}
+
 
 .radio-container {
+    text-align: left; /* Ensure text alignment is left */
     background-color: #333;
     padding: 15px;
     border: 1px solid #444;
     border-radius: 5px;
-    width: 100%;
-    max-width: 220px;
+    width: 45%;
+    max-width: 300px;
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
     margin-bottom: 20px;
     margin: 0 auto;
@@ -223,7 +216,7 @@ button:hover {
 .radio-group label {
     margin-bottom: 10px;
     color: #d9d9d9;
-    font-size: 1rem;
+    font-size: 0.7rem;
 }
 
 input[type="radio"] {
@@ -232,6 +225,33 @@ input[type="radio"] {
 
 .hidden-text-field {
     display: none; /* Hidden by default */
+}
+
+.styled-box {
+    background-color: #333;
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 5px;
+    width: 45%;
+    max-width: 300px; /* Adjust the max-width proportionally */
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+    margin-bottom: 20px;
+    margin: 0 auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Responsive rule: switch to stacking layout on smaller screens */
+@media (max-width: 768px) {
+    .radio-container,
+    .styled-box {
+        width: 100%; /* Stack elements by making them full width */
+        max-width: none; /* Remove the max-width constraint */
+    }
 }
 
 
@@ -244,7 +264,12 @@ input[type="radio"] {
     width: 70%;
     text-align: center;
     margin-top: 20px;
+
+    /* Centering adjustments */
+    margin-left: auto; /* Add auto margin for centering */
+    margin-right: auto; /* Add auto margin for centering */
 }
+
 
 .footer-links {
     margin-top: 20px;
@@ -275,7 +300,141 @@ input[type="radio"] {
 /*    margin-bottom: 10px;*/
 }
 
+.vtiny-icon {
+    width: 15px;
+    height: auto;
+    margin-bottom: 2px;
+}
+
 .x-icon {
     width: 10px; /* Adjust size as needed */
     height: 10px;
 }
+
+
+/*   slideshow stuff */
+* {box-sizing: border-box;}
+body {font-family: Verdana, sans-serif;}
+.mySlides {display: none;}
+img {vertical-align: middle;}
+
+/* Slideshow container */
+.slideshow-container {
+  max-width: 1000px;
+  position: relative;
+  margin: auto;
+}
+
+/* Caption text */
+.text {
+  color: #f2f2f2;
+  font-size: 15px;
+  padding: 8px 12px;
+  position: absolute;
+  bottom: 8px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Number text (1/3 etc) */
+.numbertext {
+  color: #f2f2f2;
+  font-size: 12px;
+  padding: 8px 12px;
+  position: absolute;
+  top: 0;
+}
+
+/* The dots/bullets/indicators */
+.dot {
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active {
+  background-color: #717171;
+}
+
+/* Fading animation */
+.fade {
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@keyframes fade {
+  from {opacity: .4} 
+  to {opacity: 1}
+}
+
+/* On smaller screens, decrease text size */
+@media only screen and (max-width: 300px) {
+  .text {font-size: 11px}
+}
+
+/* Floating note handlers */
+
+.popup {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* The actual popup */
+.popup .popuptext {
+    visibility: hidden;
+    width: 450px;
+    background-color: #333; /* Match the textarea background */
+    color: #d9d9d9; /* Match the textarea text color */
+    font-size: 0.8rem; /* Match the textarea font size */
+    font-weight: normal; /* Ensure regular weight */
+    font-family: 'Arial', sans-serif; /* Match the textarea font family */
+    text-align: left; /* Align text to the left like the textarea */
+    border: 2px solid #39ff14; /* Add a border like the textarea */
+    border-radius: 6px;
+    padding: 20px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -130px; /* Center the popup */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+/* Popup arrow */
+.popup .popuptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Toggle this class - hide and show the popup */
+.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {opacity: 0;} 
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity:1 ;}
+}
+

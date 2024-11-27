@@ -11,131 +11,147 @@
         <script src="./js/handleFields.js" defer></script>
         <script src="./js/handleDropZone.js" defer></script>
         <script src="./js/utils.js" defer></script>
+        <script src="./js/slideShow.js" defer></script>
 
         <script src="./js/main.js" defer></script>
+
     </head>
     <body>
-        <div class="container">
-            <div id="dateTimeDisplay"></div>
-            <img src="easyalgo2.png" alt="Icon" class="icon">
-            <h1>TradingView Watchlist Tool</h1>
-            <h2>Narrow Pivot Points </h2>
-            <form>
-                <label for="exchange">File Naming</label>
-                <div class="radio-container">
-                    <div class="radio-group">
-                        <label>
-                            <input type="radio" name="option" value="daily" onchange="toggleTextField()" checked> Daily_YYYY-MM-DD
-                        </label>
-                        <label>
-                            <input type="radio" name="option" value="weekly" onchange="toggleTextField()"> Weekly_YYYY-MM-DD
-                        </label>
-                        <label>
-                            <input type="radio" name="option" value="monthly" onchange="toggleTextField()"> Monthly_YYYY-MM-DD
-                        </label>
-                        <label>
-                            <input type="radio" name="option" value="combo" onchange="toggleTextField()"> Combo_YYYY-MM-DD
-                        </label>
-                        <label>
-                            <input type="radio" name="option" value="named" onchange="toggleTextField()"> -- named --
-                        </label>
+
+        <div class="main-container">
+
+            <div class="slideshow-container">
+                <div class="mySlides fade">
+                    <img src="image1.png" style="width:100%">
+                </div>
+
+                <div class="mySlides fade">
+                    <img src="image2.png" style="width:100%">
+                </div>
+
+                <div class="mySlides fade">
+                    <img src="image3.png" style="width:100%">
+                </div>
+
+                </div>
+                <br>
+            </div>
+            <div style="height: 20px;"></div>
+
+            <div class="container">
+                <div id="dateTimeDisplay"></div>
+                <img src="easyalgo2.png" alt="Icon" class="icon">
+
+                <a href="#" class="video-link" id="video-link" onclick="return false;">
+                    <p class="video-text">* * How To Video * * (coming soon)</p>
+                </a>
+
+                <h1>TradingView Watchlist Tool</h1>
+                <h2>Narrow Pivot Points </h2>
+                <form>
+
+                    <div class="form-row">
+                        <div class="styled-box">
+                            <label for="exchange">Your Preferred Exchange</label>
+                            <select id="dropdown" name="cex" onchange="checkForChanges()">
+                                <option value="BINANCE">BINANCE</option>
+                                <option value="BINGX">BINGX</option>
+                                <option value="BITFINEX">BITFINEX</option>
+                                <option value="BITGET">BITGET</option>
+                                <option value="BITHUMB">BITHUMB</option>
+                                <option value="BITKUB">BITKUB</option>
+                                <option value="BITMEX">BITMEX</option>
+                                <option value="BITSTAMP">BITSTAMP</option>
+                                <option value="BLOFIN" selected>BLOFIN</option>
+                                <option value="BYBIT">BYBIT</option>
+                                <option value="COINBASE">COINBASE</option>
+                                <option value="COINEX">COINEX</option>
+                                <option value="CRYPTO">CRYPTO</option>
+                                <option value="CRYPTOCAP">CRYPTOCAP</option>
+                                <option value="EASYMARKETS">EASYMARKETS</option>
+                                <option value="FOREXCOM">FOREXCOM</option>
+                                <option value="GATEIO">GATEIO</option>
+                                <option value="GEMINI">GEMINI</option>
+                                <option value="KRAKEN">KRAKEN</option>
+                                <option value="KUCOIN">KUCOIN</option>
+                                <option value="MEXC">MEXC</option>
+                                <option value="OKX">OKX</option>
+                                <option value="PHEMEX">PHEMEX</option>
+                                <option value="POLONIEX">POLONIEX</option>
+                            </select>
+
+                            <label for="sections">
+                                <div class="icon-container">
+                                    Optional Section Names
+                                    <div class="popup" onclick="toggleNote()">
+                                        <img src="information.png" alt="Icon" class="vtiny-icon">
+                                        <span class="popuptext" id="myPopup">
+                                            This section allows you to specify section dividers and additional symbols in your watchlists.<br/> - You can put in symbols such as TOTAL3, DXY, BTC.D, MSTR etc.<br/> - To add section dividers, you must enter ### in front of the section name.
+                                        </span>
+                                    </div>
+                                    
+                                </div>
+                            </label> 
+                           
+                            <div class="textarea-container">
+                                <textarea id="sections" class="styled-textarea" rows="10" onchange="checkForChanges()">
+                                    None
+                                </textarea>
+                            </div>
+
+
+                            <button class="styled-button" onclick="savePreferencesToCookie()">Save Preferences to Cookie</button>
+                        </div>
+
+                        <div class="radio-container">
+                            <label for="exchange">File Naming</label>
+                            <div class="radio-group">
+                                <label>
+                                    <input type="radio" name="option" value="daily" onchange="toggleTextField()" checked> Daily_YYYY-MM-DD
+                                </label>
+                                <label>
+                                    <input type="radio" name="option" value="weekly" onchange="toggleTextField()"> Weekly_YYYY-MM-DD
+                                </label>
+                                <label>
+                                    <input type="radio" name="option" value="monthly" onchange="toggleTextField()"> Monthly_YYYY-MM-DD
+                                </label>
+                                <label>
+                                    <input type="radio" name="option" value="combo" onchange="toggleTextField()"> Combo_YYYY-MM-DD
+                                </label>
+                                <label>
+                                    <input type="radio" name="option" value="named" onchange="toggleTextField()"> -- named --
+                                </label>
+                            </div>
+
+                            <input type="text" id="namedField" placeholder="Enter name" class="hidden-text-field" value="Pramod_YYYY/MM/DD.txt" onclick="selectText(this)">
+
+                        </div>
+
+                    </div>
+
+                    <a id="download-link" download="reformatted-file.txt">Download Reformatted File</a>
+                    <div id="drop-zone" class="container">Drag and drop a 
+                        <br/><em>"Trend X ( Scanner )"</em>
+                        <br/>file here, 
+                        <br/>OR
+                        <br/>click to upload
+                    </div>
+                    <input type="file" id="file-input" style="display: none;">
+
+                </form>
+                <hl/>
+                <div class="footer-container">
+                    <div class="footer-links">
+                        <a href="https://www.easyalgoindicators.com/powerfriend" target="_blank">
+                            <img src="easyalgo2.png" alt="Icon" class="tiny-icon">&nbsp;&nbsp;Get started today for free
+                        </a>
+                        <a href="https://x.com/RealEasyAlgo"  target="_blank">
+                            <img src="x.png" alt="Icon" class="tiny-icon">&nbsp;&nbsp;Follow us on X
+                        </a>
                     </div>
                 </div>
-                <p>
-                </p>
-
-                <input type="text" id="namedField" placeholder="Enter name" class="hidden-text-field" value="Pramod_YYYY/MM/DD.txt" onclick="selectText(this)">
-                <p>
-                </p>
-                <p>
-                </p>
-
-                <label for="exchange">Your preferred exchange</label>
-                <select id="dropdown" name="cex">
-                    <option value="BINANCE">BINANCE</option>
-                    <option value="BINGX">BINGX</option>
-                    <option value="BITFINEX">BITFINEX</option>
-                    <option value="BITGET">BITGET</option>
-                    <option value="BITHUMB">BITHUMB</option>
-                    <option value="BITKUB">BITKUB</option>
-                    <option value="BITMEX">BITMEX</option>
-                    <option value="BITSTAMP">BITSTAMP</option>
-                    <option value="BLOFIN" selected>BLOFIN</option>
-                    <option value="BYBIT">BYBIT</option>
-                    <option value="COINBASE">COINBASE</option>
-                    <option value="COINEX">COINEX</option>
-                    <option value="CRYPTO">CRYPTO</option>
-                    <option value="CRYPTOCAP">CRYPTOCAP</option>
-                    <option value="EASYMARKETS">EASYMARKETS</option>
-                    <option value="FOREXCOM">FOREXCOM</option>
-                    <option value="GATEIO">GATEIO</option>
-                    <option value="GEMINI">GEMINI</option>
-                    <option value="KRAKEN">KRAKEN</option>
-                    <option value="KUCOIN">KUCOIN</option>
-                    <option value="MEXC">MEXC</option>
-                    <option value="OKX">OKX</option>
-                    <option value="PHEMEX">PHEMEX</option>
-                    <option value="POLONIEX">POLONIEX</option>
-                </select>
-
-                <label for="sections">Optional Section Names</label>
-                <div class="textarea-container">
-                    <textarea id="sections" class="styled-textarea" rows="10">
-###REFERENCE
-BYBIT:BTCUSDT
-###LONG POSITIONS
-###LONG POSITIONS CLOSED
-###SHORT POSITION
-###SHORT POSITIONS CLOSED
-###MISSED ENTRIES
-###INSIDE WEEKLY PIVOT
-###CURIOSITIES
-###NARROWS
-                    </textarea>
-                </div>
-
-
-                <button class="styled-button" onclick="savePreferencesToCookie()">Save Preferences to Cookie</button>
-
-                <div id="drop-zone" class="container">Drag and drop a 
-                    <br/><em>"Trend X ( Scanner )"</em>
-                    <br/>file here, 
-                    <br/>OR
-                    <br/>click to upload</div>
-                <a id="download-link" download="reformatted-file.txt">Download Reformatted File</a>
-                <input type="file" id="file-input" style="display: none;">
-
-            </form>
-            <hl/>
-            <div class="footer-container">
-                <div class="footer-links">
-                    <a href="https://www.easyalgoindicators.com/powerfriend" target="_blank">
-                        <img src="easyalgo2.png" alt="Icon" class="tiny-icon">&nbsp;&nbsp;Get started today for free
-                    </a>
-                    <a href="https://x.com/RealEasyAlgo"  target="_blank">
-                        <img src="x.png" alt="Icon" class="tiny-icon">&nbsp;&nbsp;Follow us on X
-                    </a>
-                </div>
             </div>
         </div>
-
-        <div class="slideshow-container">
-        <!-- <div class="container"> -->
-            <div class="slideshow">
-                <div class="slide">
-                    <img src="image1.png" alt="Slide 1">
-                </div>
-
-                <div class="slide">
-                    <img src="image2.png" alt="Slide 1">
-                </div>
-
-                <div class="slide">
-                    <img src="image1.png" alt="Slide 1">
-                </div>
-            </div>
-        </div>
-
 
         <script type="module">
 
@@ -144,33 +160,44 @@ BYBIT:BTCUSDT
             fileInput.addEventListener('change', handleFile);
 
 
-            window.onload = () => {
+            window.onload = async () => {
+
+                const defaultFilePath = 'defaultPreferences.json'; // Path to the JSON file
+                let defaultPreferences = {};
+
+                try {
+                    // Fetch the default preferences
+                    const response = await fetch(defaultFilePath);
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    defaultPreferences = await response.json();
+                    console.log('Default preferences loaded:', defaultPreferences);
+                } catch (error) {
+                    console.error('Failed to load default preferences:', error);
+                }
+
+
                 const today = new Date();
                 const firstDayOfMonth = getFirstDayOfMonth();
                 const sundayOfWeek = getSundayOfWeek();
 
-                changeRadioLabelText("daily", `Daily_${formatDate(today)}.txt`);
-                changeRadioLabelText("weekly", `Weekly_${getSundayOfWeek()}.txt`);
-                changeRadioLabelText("monthly", `Monthly_${getFirstDayOfMonth()}.txt`);
-                changeRadioLabelText("combo", `Combo_${formatDate(today)}.txt`);
-
-                const preferences = loadPreferences(); // Retrieve and log the preferences
+                const preferences = loadPreferences(defaultPreferences); // Retrieve and log the preferences
+                console.log("preferences");
                 console.dir(preferences);
                 const { exchange, sectionsText } = preferences;
+
+                changeRadioLabelText("daily", `Daily_${formatDate(today)}_${exchange}.txt`);
+                changeRadioLabelText("weekly", `Weekly_${getSundayOfWeek()}_${exchange}.txt`);
+                changeRadioLabelText("monthly", `Monthly_${getFirstDayOfMonth()}_${exchange}.txt`);
+                changeRadioLabelText("combo", `Combo_${formatDate(today)}_${exchange}.txt`);
+
                 selectDropdownItem(exchange);
                 replaceTextareaContent(sectionsText)
 
+                showSlides();
 
-//                 const file =
-// `
-// BYBIT:ADAUSDT.P
-// BYBIT:APTUSDT.P
-// BYBIT:ZKJUSDT.P
-// `
-//                 let result = processFile(file);
-//                 console.dir(result);
             };
 
         </script>
+
     </body>
 </html>
