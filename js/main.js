@@ -93,5 +93,12 @@ const handleFile = async (event) => {
     downloadLink.href = URL.createObjectURL(blob);
     downloadLink.style.display = 'block';
 
+    // resetRadioGroup()
+
     // savePreferences({ exchange, sectionsText })
 }
+
+document.getElementById('download-link').addEventListener('click', () => {
+    toggleFileContainer(false);
+    resetRadioGroup()
+});

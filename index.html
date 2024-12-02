@@ -52,6 +52,7 @@
 
                     <div class="form-row">
                         <div class="styled-box">
+                            <h3>Step #1 - Default settings</h3>
                             <label for="exchange">Your Preferred Exchange</label>
                             <select id="dropdown" name="cex" onchange="checkForChanges()">
                                 <option value="BINANCE">BINANCE</option>
@@ -104,10 +105,11 @@
                         </div>
 
                         <div class="radio-container">
+                            <h3>Step #2 - File name selection</h3>
                             <label for="exchange">File Naming</label>
                             <div class="radio-group">
                                 <label>
-                                    <input type="radio" name="option" value="daily" onchange="toggleTextField()" checked> Daily_YYYY-MM-DD
+                                    <input type="radio" name="option" value="daily" onchange="toggleTextField()"> Daily_YYYY-MM-DD
                                 </label>
                                 <label>
                                     <input type="radio" name="option" value="weekly" onchange="toggleTextField()"> Weekly_YYYY-MM-DD
@@ -129,14 +131,17 @@
 
                     </div>
 
-                    <a id="download-link" download="reformatted-file.txt">Download Reformatted File</a>
-                    <div id="drop-zone" class="container">Drag and drop a 
-                        <br/><em>"Trend X ( Scanner )"</em>
-                        <br/>file here, 
-                        <br/>OR
-                        <br/>click to upload
+                    <div id="file-container" class="file-container">
+                        <h3>Step #3 - Drop a file (or click to get a chooser)</h3>
+                        <a id="download-link" download="reformatted-file.txt">Download Reformatted File</a>
+                        <div id="drop-zone" class="container">Drag and drop a 
+                            <br/><em>"Trend X ( Scanner )"</em>
+                            <br/>file here, 
+                            <br/>OR
+                            <br/>click to upload
+                        </div>
+                        <input type="file" id="file-input" style="display: none;">
                     </div>
-                    <input type="file" id="file-input" style="display: none;">
 
                 </form>
                 <hl/>
@@ -189,6 +194,8 @@
                 changeRadioLabelText("weekly", `Weekly_${getSundayOfWeek()}_${exchange}.txt`);
                 changeRadioLabelText("monthly", `Monthly_${getFirstDayOfMonth()}_${exchange}.txt`);
                 changeRadioLabelText("combo", `Combo_${formatDate(today)}_${exchange}.txt`);
+
+                resetRadioGroup()
 
                 selectDropdownItem(exchange);
                 replaceTextareaContent(sectionsText)
