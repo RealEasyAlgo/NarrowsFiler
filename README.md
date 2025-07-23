@@ -16,3 +16,4 @@ You can directly use the tool, in your browser, from:
 https://realeasyalgo.github.io/NarrowsFiler/
 
 
+Version : 2025/07/23
