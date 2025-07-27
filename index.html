@@ -12,6 +12,7 @@
         <script src="./js/handleDropZone.js" defer></script>
         <script src="./js/utils.js" defer></script>
         <script src="./js/slideShow.js" defer></script>
+        <script src="./js/convert.js" defer></script>
 
         <script src="./js/main.js" defer></script>
 
@@ -155,6 +156,42 @@
                         </a>
                     </div>
                 </div>
+            </div>
+<!-- 
+            Futures Grid Details
+            AAVEUSDT
+            Neutral
+            10X
+            Arbitrage 0 times
+            Running 0H 18Min
+            Total Profit(USDT)
+            -0.0585(-0.01%)
+            APY -99.99%
+            Investment(USDT) 300.0000
+            Occupied Margin (USDT)
+            150.8685
+            Available Margin (USDT)
+            149.1256
+            TP/SL
+            -- / --
+
+                Running(50)
+                Trade History(0)
+                Details 
+
+            Price Range 275.00 - 325.00
+            Profit/Grid 0.26% - 0.32%
+            Grid No. 50
+            Created Time 2025/07/23 10:31:29
+            Grid Open Price 292.41
+            Grid ID 16800001420508
+
+              <textarea id="inputText" class="styled-textarea" rows="10">
+              <button onclick="convert()">...</button>
+ -->
+            <div class="textarea-container">
+              <textarea id="outputText" class="styled-textarea" rows="4" readonly></textarea>
+              <textarea id="inputText" class="styled-textarea" rows="4" oninput="convert()"></textarea>                
             </div>
         </div>
 
