@@ -3,31 +3,23 @@
 import os
 import sys
 import json
+import shutil
+
 from datetime import datetime
 
 import requests
 
-# ─── CONFIGURATION ────────────────────────────────────────────────────────────────
-
-# List of CEX exchanges to include
-EXCHANGES = [
-    "BINANCE",   # 457 assets
-    "BINGX",     # 453 assets
-    "BITGET",    # 501 assets
-    "BITMEX",    #  98 assets
-    "BLOFIN",    # 488 assets
-    "BYBIT",     # 539 assets
-    "GATEIO",    # 600 assets
-    "MEXC",      # 708 assets
-    "OKX",       # 243 assets
-    "PHEMEX",    # 473 assets
-    "WEEX",      # 679 assets
-    "TOOBIT"     # 442 assets
-]
-
 SCAN_URL = "https://scanner.tradingview.com/crypto/scan"
+DAILY_UPDATE_DIR = "assetsPerExchange_tmp"
+DATELESS_FILE_NAME = "AssetsPerExchange.json"
 
 # ─── FUNCTIONS ────────────────────────────────────────────────────────────────────
+
+def load_exchanges():
+    here = os.path.dirname(__file__)
+    path = os.path.join(here, 'Exchanges.json')
+    with open(path, 'r', encoding='utf-8') as f:
+        return json.load(f)
 
 def fetch_all_symbols():
     """
@@ -39,12 +31,12 @@ def fetch_all_symbols():
     body = resp.json()
     return body.get("data", [])
 
-def group_usdt_perps(entries):
+def group_usdt_perps(exchanges, entries):
     """
     From the full list of entries, build a mapping:
       exchange -> sorted list of tickers ending with 'USDT.P'
     """
-    result = { exch: [] for exch in EXCHANGES }
+    result = { exch: [] for exch in exchanges }
 
     for item in entries:
         s = item.get("s", "")
@@ -52,7 +44,7 @@ def group_usdt_perps(entries):
             continue
         exch, ticker = s.split(":", 1)
         # only keep our target exchanges
-        if exch not in EXCHANGES:
+        if exch not in exchanges:
             continue
         # only USDT perpetuals
         if not ticker.endswith("USDT.P"):
@@ -65,9 +57,48 @@ def group_usdt_perps(entries):
 
     return result
 
+def write_output(data):
+    here = os.path.dirname(__file__)
+    date_tag = datetime.now().strftime("%y%m%d")
+    out_name = f"apx_{date_tag}.json"
+    # out_path = DAILY_UPDATE_DIR
+    out_path = os.path.join(here, DAILY_UPDATE_DIR, out_name)
+    # with open(out_path, 'w', encoding='utf-8') as f:
+    #     json.dump(data, f, indent=2, ensure_ascii=False)
+    return out_name
+
+def reportAssestPerExchange(grouped):
+    # Print a count of USDT-perpetual assets per exchange
+    print("   ... Asset counts per exchange:")
+    for exch, syms in grouped.items():
+        print(f"      - {exch}: {len(syms)} assets")
+
+def copyFromSubdir(subdir, orig_name, new_name) -> str:
+    src_path = os.path.join(subdir, orig_name)
+    if not os.path.isfile(src_path):
+        raise FileNotFoundError(f"Source file not found: {src_path}")
+
+    dst_path = os.path.join(os.getcwd(), new_name)
+    # copy2 preserves metadata; use copy() or copyfile() if you don’t need that
+    shutil.copy2(src_path, dst_path)
+    return dst_path
+
+def git_commit_and_push(filepath):
+    # Format today as "yy-MM-dd"
+    today = datetime.date.today().strftime('%y-%m-%d')
+    msg = f"Exchange symbols update for {today}"
+    try:
+        subprocess.run(['git', 'add', filepath], check=True)
+        subprocess.run(['git', 'commit', '-m', msg], check=True)
+        subprocess.run(['git', 'push'], check=True)
+        print(f"✅ Committed and pushed: {msg}")
+    except subprocess.CalledProcessError as e:
+        print("⚠️ Git command failed:", e)
+
+
 # ─── MAIN ────────────────────────────────────────────────────────────────────────
 
-def main():
+def mainX():
     # fetch everything
     print("Fetching full crypto scan…", file=sys.stderr)
     entries = fetch_all_symbols()
@@ -78,17 +109,41 @@ def main():
     grouped = group_usdt_perps(entries)
 
     # write output
-    date_tag = datetime.now().strftime("%y%m%d")
-    out_name = f"AssetsPerExchange_{date_tag}.json"
-    with open(out_name, "w", encoding="utf-8") as f:
-        json.dump(grouped, f, ensure_ascii=False, indent=2)
+    out_file = write_output(grouped)
+    # date_tag = datetime.now().strftime("%y%m%d")
+    # out_name = f"AssetsPerExchange_{date_tag}.json"
+    # with open(out_name, "w", encoding="utf-8") as f:
+    #     json.dump(grouped, f, ensure_ascii=False, indent=2)
 
-# Print a count of USDT-perpetual assets per exchange
+    # Print a count of USDT-perpetual assets per exchange
     print("\nAsset counts per exchange:")
     for exch, syms in grouped.items():
         print(f"{exch}: {len(syms)} assets")
 
     print(f"Done! Wrote file: {out_name}", file=sys.stderr)
+
+def main():
+    print("\nLoading exchanges: ", file=sys.stderr)
+    exchanges = load_exchanges()
+    print(f"   ... will work with: {exchanges}")
+
+    print("\nFetching symbols.", file=sys.stderr)
+    assets = fetch_all_symbols()
+    # print(f"\nSymbols fetched.", file=sys.stderr)
+
+    print("\nGrouping USDT-perpetual symbols by exchange…", file=sys.stderr)
+    grouped = group_usdt_perps(exchanges, assets)
+    # print(f"   ... grouped symbols.  {grouped}")
+    reportAssestPerExchange(grouped)
+
+
+    print("\nSaving symbols per exchange ...", file=sys.stderr)
+    out_file = write_output(grouped)
+    print(f"   ... wrote symbols per exchange to {out_file} file", file=sys.stderr)
+
+    copyFromSubdir(DAILY_UPDATE_DIR, out_file, DATELESS_FILE_NAME)
+    
+    # git_commit_and_push(DATELESS_FILE_NAME)
 
 if __name__ == "__main__":
     main()

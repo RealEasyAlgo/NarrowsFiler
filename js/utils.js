@@ -62,7 +62,7 @@ const updateDateTime = () => {
     })
 
     document.getElementById("dateTimeDisplay").innerText = formattedDateTime;
-    console.log(`Timestamp ${formattedDateTime} ${newDate} vs ${formatDate(now)}`)
+    // console.log(`Timestamp ${formattedDateTime} ${newDate} vs ${formatDate(now)}`)
     if (oldDate != newDate) {
       changeRadioLabelText("daily", `Daily_${newDate}.txt`);
       changeRadioLabelText("weekly", `Weekly_${getSundayOfWeek()}.txt`);

@@ -2,7 +2,7 @@ const savePreferencesToCookie = () => {
     const cookieName = "EA_preferences"
     const preferences = { 
         "sectionsText": document.getElementById("sections").value,
-        "exchange" : document.getElementById("dropdown").value
+        "exchange" : document.getElementById("exchangeDropdown").value
     }
     const jsonPreferences = JSON.stringify(preferences);
     setCookie(cookieName, jsonPreferences, 7); // Cookie lasts 7 days
@@ -52,7 +52,7 @@ const loadPreferences = (defaults) => {
 const checkForChanges = () => {
     console.log("checkForChanges()")
     const button = document.querySelector('.styled-button');
-    const dropdownValue = document.getElementById('dropdown').value;
+    const dropdownValue = document.getElementById('exchangeDropdown').value;
     const textareaValue = document.getElementById('sections').value.trim();
 
     // Retrieve cookie if it exists

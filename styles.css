@@ -1,3 +1,48 @@
+/* ─── Exchange-Tile Styling ─────────────────────────────────────────────────── */
+
+/* make the container flow exactly as your form sections do */
+.exchange-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;          /* same vertical spacing your radio list uses */
+}
+
+/* style each tile just like your radio-label blocks */
+.exchange-tile {
+  display: flex;
+  align-items: center;
+  padding: 0.5em 1em;  /* match the padding on your labels */
+  background-color: #2d2d2d;  /* same dark-grey panel background */
+  color: #e0e0e0;       /* same light-grey text your labels use */
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 0.6rem;    /* match the radio-label font-size */
+  border-radius: 2px;
+  cursor: grab;
+  user-select: none;
+}
+
+/* drag handle styling, matching your icon/text color for secondary controls */
+.exchange-tile .drag-handle {
+  margin-right: 0.75em;
+  font-size: 0.5rem;
+  color: #aaa;         /* same “dim” color your icons/buttons use */
+}
+
+/* visual cue while dragging */
+.exchange-tile.dragging {
+  opacity: 0.6;
+}
+
+/* ─── Subtitle under the heading ───────────────────────────────────────────── */
+
+.exchange-subtitle {
+  margin: 0.2em 0 0.75em;     /* small vertical spacing */
+  font-size: 0.6rem;          /* a bit smaller than body text */
+  color: #bbb;                 /* a muted light-grey hint color */
+  line-height: 0.5;            /* keep it compact but readable */
+}
+
+
 #dateTimeDisplay {
     font-size: 0.75em; /* Half the base font size */
     margin-bottom: 2em; /* Spacing equivalent to two line feeds */

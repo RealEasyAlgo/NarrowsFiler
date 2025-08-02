@@ -4,8 +4,11 @@ const replaceTextareaContent = (newContent) => {
 }
 
 const selectDropdownItem = (value) => {
-  const dropdown = document.getElementById("dropdown");
-  dropdown.value = value;
+  // console.log("selectDropdownItem(value)")
+  // console.dir(value)
+  const exchange = document.getElementById("exchangeDropdown");
+  // console.dir(exchange)
+  exchange.value = value;
 }
 
 function toggleFileContainer(visible) {

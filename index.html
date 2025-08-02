@@ -13,6 +13,7 @@
         <script src="./js/utils.js" defer></script>
         <script src="./js/slideShow.js" defer></script>
         <script src="./js/convert.js" defer></script>
+        <script src="./js/loadExchanges.js" defer></script>
 
         <script src="./js/main.js" defer></script>
 
@@ -54,33 +55,12 @@
                     <div class="form-row">
                         <div class="styled-box">
                             <h3>Step #1 - Default settings</h3>
-                            <label for="exchange">Your Preferred Exchange</label>
-                            <select id="dropdown" name="cex" onchange="checkForChanges()">
-                                <option value="BINANCE">BINANCE</option>
-                                <option value="BINGX">BINGX</option>
-                                <option value="BITFINEX">BITFINEX</option>
-                                <option value="BITGET">BITGET</option>
-                                <option value="BITHUMB">BITHUMB</option>
-                                <option value="BITKUB">BITKUB</option>
-                                <option value="BITMEX">BITMEX</option>
-                                <option value="BITSTAMP">BITSTAMP</option>
-                                <option value="BLOFIN" selected>BLOFIN</option>
-                                <option value="BYBIT">BYBIT</option>
-                                <option value="COINBASE">COINBASE</option>
-                                <option value="COINEX">COINEX</option>
-                                <option value="CRYPTO">CRYPTO</option>
-                                <option value="CRYPTOCAP">CRYPTOCAP</option>
-                                <option value="EASYMARKETS">EASYMARKETS</option>
-                                <option value="FOREXCOM">FOREXCOM</option>
-                                <option value="GATEIO">GATEIO</option>
-                                <option value="GEMINI">GEMINI</option>
-                                <option value="KRAKEN">KRAKEN</option>
-                                <option value="KUCOIN">KUCOIN</option>
-                                <option value="MEXC">MEXC</option>
-                                <option value="OKX">OKX</option>
-                                <option value="PHEMEX">PHEMEX</option>
-                                <option value="POLONIEX">POLONIEX</option>
-                            </select>
+
+                            <label for="exchangeContainer">Your Preferred Exchanges</label>                        
+                            <p class="exchange-subtitle">
+                              Drag’n drop your preferences to the top of the list
+                            </p>
+                            <div id="exchangeContainer" class="exchange-container"></div>
 
                             <label for="sections">
                                 <div class="icon-container">
@@ -102,7 +82,8 @@
                             </div>
 
 
-                            <button class="styled-button" onclick="savePreferencesToCookie()">Save Preferences to Cookie</button>
+                            <button id="savePrefsBtn">Save Preferences to Cookie</button>
+
                         </div>
 
                         <div class="radio-container">
@@ -234,7 +215,6 @@
 
                 resetRadioGroup()
 
-                selectDropdownItem(exchange);
                 replaceTextareaContent(sectionsText)
 
                 showSlides();
