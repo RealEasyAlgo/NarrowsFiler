@@ -105,53 +105,71 @@ document.getElementById('download-link').addEventListener('click', () => {
 
 
 document.addEventListener('DOMContentLoaded', async () => {
+
+  const sections = document.getElementById("sections")
   const container = document.getElementById('exchangeContainer');
   const saveBtn   = document.getElementById('savePrefsBtn');
-  if (!container || !saveBtn) {
-    console.error('Missing #exchangeContainer or #savePrefsBtn');
+  if (!container || !saveBtn || !sections) {
+    console.error('Missing #exchangeContainer or #savePrefsBtn or #sections');
     return;
   }
 
+
+  // const defaultWatchlistPreferences = await loadWatchlistDefaultPreferences();
+  // const watchlistPreferences = await loadWatchlistPreferences(defaultWatchlistPreferences); // Retrieve and log the preferences
+  const watchlistPreferences = await loadWatchlistPreferences(); // Retrieve and log the preferences
+  // replaceTextareaContent(watchlistPreferences)
+
+
   // 1) load list
   let exchanges = await loadExchanges();
+  console.log(`Ready to load cookies`);
+  console.dir(exchanges);
 
-  // 2) reorder if user has saved prefs
-  const cookieMatch = document.cookie.match(/(?:^|;\s*)preferredExchanges=([^;]+)/);
-  if (cookieMatch) {
-    try {
-      const saved = JSON.parse(decodeURIComponent(cookieMatch[1]));
-      // keep only known exchanges, in saved order
-      const ordered = saved.filter(name => exchanges.includes(name));
-      const remaining = exchanges.filter(name => !ordered.includes(name));
-      exchanges = ordered.concat(remaining);
-    } catch (e) {
-      console.warn('Could not parse preferredExchanges cookie:', e);
-    }
-  }
+  // Retrieve existing cookies
+  // const exchangesCookie = JSON.parse(getCookie(EXCHANGES_COOKIE_NAME));
+  // const sectionsCookie = getCookie(SECTIONS_COOKIE_NAME);
 
-  // 3) render tiles
-  function renderTiles(list) {
-    container.innerHTML = '';
-    list.forEach(name => {
-      const tile = document.createElement('div');
-      tile.className = 'exchange-tile';
-      tile.draggable = true;
 
-      // drag handle
-      const handle = document.createElement('span');
-      handle.className = 'drag-handle';
-      handle.textContent = '☰';
-      tile.append(handle);
+  // // 2) reorder if user has saved prefs
+  // const cookieMatch = document.cookie.match(/(?:^|;\s*)preferredExchanges=([^;]+)/);
+  // if (cookieMatch) {
+  //   try {
+  //     const saved = JSON.parse(decodeURIComponent(cookieMatch[1]));
+  //     // keep only known exchanges, in saved order
+  //     const ordered = saved.filter(name => exchanges.includes(name));
+  //     const remaining = exchanges.filter(name => !ordered.includes(name));
+  //     exchanges = ordered.concat(remaining);
+  //   } catch (e) {
+  //     console.warn('Could not parse preferredExchanges cookie:', e);
+  //   }
+  // }
 
-      // label
-      const label = document.createElement('span');
-      label.textContent = name;
-      tile.append(label);
+  // // 3) render tiles
+  // function renderExchangeListTiles(list) {
+  //   container.innerHTML = '';
+  //   list.forEach(name => {
+  //     const tile = document.createElement('div');
+  //     tile.className = 'exchange-tile';
+  //     tile.draggable = true;
 
-      container.append(tile);
-    });
-  }
-  renderTiles(exchanges);
+  //     // drag handle
+  //     const handle = document.createElement('span');
+  //     handle.className = 'drag-handle';
+  //     handle.textContent = '☰';
+  //     tile.append(handle);
+
+  //     // label
+  //     const label = document.createElement('span');
+  //     label.textContent = name;
+  //     tile.append(label);
+
+  //     container.append(tile);
+  //   });
+  // }
+  renderExchangeListTiles(container, exchanges);
+
+  renderWatchListSections(sections, watchlistPreferences);
 
   // 4) drag-and-drop logic
   let draggingEl = null;
@@ -193,81 +211,30 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 5) save button handler
   saveBtn.addEventListener('click', () => {
+
+    var result = "Preferences storage result ..."
     const ordered = [...container.querySelectorAll('.exchange-tile span:last-child')]
       .map(span => span.textContent);
-    const cookieVal = encodeURIComponent(JSON.stringify(ordered));
-    document.cookie = `preferredExchanges=${cookieVal};path=/;max-age=${60*60*24*365}`;
-    alert('Preferences saved!');
+    const orderedExchanges = encodeURIComponent(JSON.stringify(ordered));
+    const exchanges_ok = saveCookies(EXCHANGES_COOKIE_NAME, orderedExchanges)
+
+    const watchlistSections = encodeURIComponent(sections.value)
+    // saveCookies(SECTIONS_COOKIE_NAME, "sdfasdf")
+    const sections_ok = saveCookies(SECTIONS_COOKIE_NAME, watchlistSections)
+
+    if (exchanges_ok) {
+      result = `${result}\n   - Exchanges:\n${decodeURIComponent(exchanges_ok)}`
+    } else {
+      result = `${result}\n   - Exchange preferences failed to save! `
+    }
+
+    if (sections_ok) {
+      result = `${result}\n   - Watchlist sections:\n${decodeURIComponent(sections_ok)}`
+    } else {
+      result = `${result}\n   - Watchlist sections failed to save! `
+    }
+    alert(result);
+
   });
 });
 
-/*
-// js/main.js
-document.addEventListener('DOMContentLoaded', async () => {
-  const container = document.getElementById('exchangeContainer');
-  const saveBtn   = document.getElementById('savePrefsBtn');
-  if (!container || !saveBtn) {
-    console.error('Missing #exchangeContainer or #savePrefsBtn');
-    return;
-  }
-
-  try {
-    // 1) Populate from JSON
-    const exchanges = await loadExchanges();
-    dropdown.innerHTML = '';            // clear any old options
-    exchanges.forEach(name => {
-      const opt = document.createElement('option');
-      opt.value = name;
-      opt.textContent = name;
-      dropdown.append(opt);
-    });
-
-    // 2) Restore previous choice (if any)
-    const saved = localStorage.getItem('preferredExchange');
-    if (saved && exchanges.includes(saved)) {
-      dropdown.value = saved;
-    }
-
-    console.log(`document.addEventListener('DOMContentLoaded') => saved :: ${saved}`);
-    console.dir(dropdown.value);
-
-
-    // 3) Listen & persist
-    dropdown.addEventListener('change', () => {
-      localStorage.setItem('preferredExchange', dropdown.value);
-      checkForChanges();  // your existing handler
-    });
-
-  } catch (err) {
-    console.error('Could not load exchanges:', err);
-  }
-});
-
-// document.addEventListener('DOMContentLoaded', async () => {
-//   try {
-//     const exchanges = await loadExchanges();
-//     console.log('Loaded exchanges:', exchanges);
-
-//     const sel = document.getElementById('exchangeDropdown');
-//     if (!sel) {
-//       console.error(
-//         '⚠️ Could not find a <select> with id="exchangeDropdown". ' +
-//         'Make sure your HTML has: <select id="exchangeDropdown"></select>'
-//       );
-//       return;
-//     }
-
-//     exchanges.forEach(name => {
-//       const opt = document.createElement('option');
-//       opt.value = name;
-//       opt.textContent = name;
-//       sel.append(opt);
-//     });
-
-//     // …any other startup logic…
-//   } catch (err) {
-//     console.error('Could not initialize exchanges:', err);
-//   }
-// });
-
-*/

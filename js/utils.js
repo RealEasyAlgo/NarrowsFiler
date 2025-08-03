@@ -1,3 +1,6 @@
+const EXCHANGES_COOKIE_NAME = "EA_ExchangesPreferences";
+const SECTIONS_COOKIE_NAME = "EA_SectionsPreferences";
+
 const getFirstDayOfMonth = () => {
   const today = new Date();
   const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);

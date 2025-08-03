@@ -13,7 +13,7 @@
         <script src="./js/utils.js" defer></script>
         <script src="./js/slideShow.js" defer></script>
         <script src="./js/convert.js" defer></script>
-        <script src="./js/loadExchanges.js" defer></script>
+        <!-- script src="./js/loadExchanges.js" defer></script -->
 
         <script src="./js/main.js" defer></script>
 
@@ -185,37 +185,21 @@
 
             window.onload = async () => {
 
-                const defaultFilePath = 'defaultPreferences.json'; // Path to the JSON file
-                let defaultPreferences = {};
+                // const today = new Date();
+                // const firstDayOfMonth = getFirstDayOfMonth();
+                // const sundayOfWeek = getSundayOfWeek();
 
-                try {
-                    // Fetch the default preferences
-                    const response = await fetch(defaultFilePath);
-                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                    defaultPreferences = await response.json();
-                    console.log('Default preferences loaded:', defaultPreferences);
-                } catch (error) {
-                    console.error('Failed to load default preferences:', error);
-                }
+                // const watchlistPreferences = loadWatchlistPreferences(defaultWatchlistPreferences); // Retrieve and log the preferences
+                // const { exchange, sectionsText } = preferences;
 
+                // changeRadioLabelText("daily", `Daily_${formatDate(today)}_${exchange}.txt`);
+                // changeRadioLabelText("weekly", `Weekly_${getSundayOfWeek()}_${exchange}.txt`);
+                // changeRadioLabelText("monthly", `Monthly_${getFirstDayOfMonth()}_${exchange}.txt`);
+                // changeRadioLabelText("combo", `Combo_${formatDate(today)}_${exchange}.txt`);
 
-                const today = new Date();
-                const firstDayOfMonth = getFirstDayOfMonth();
-                const sundayOfWeek = getSundayOfWeek();
+                // resetRadioGroup()
 
-                const preferences = loadPreferences(defaultPreferences); // Retrieve and log the preferences
-                console.log("preferences");
-                console.dir(preferences);
-                const { exchange, sectionsText } = preferences;
-
-                changeRadioLabelText("daily", `Daily_${formatDate(today)}_${exchange}.txt`);
-                changeRadioLabelText("weekly", `Weekly_${getSundayOfWeek()}_${exchange}.txt`);
-                changeRadioLabelText("monthly", `Monthly_${getFirstDayOfMonth()}_${exchange}.txt`);
-                changeRadioLabelText("combo", `Combo_${formatDate(today)}_${exchange}.txt`);
-
-                resetRadioGroup()
-
-                replaceTextareaContent(sectionsText)
+                // replaceTextareaContent(sectionsText)
 
                 showSlides();
 
