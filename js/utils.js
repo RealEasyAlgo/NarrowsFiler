@@ -1,6 +1,9 @@
 const EXCHANGES_COOKIE_NAME = "EA_ExchangesPreferences";
 const SECTIONS_COOKIE_NAME = "EA_SectionsPreferences";
 
+const LATEST_ASSETS_PER_EXCHANGE_FILE_NAME = "AssetsPerExchange.json"
+
+
 const getFirstDayOfMonth = () => {
   const today = new Date();
   const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -81,3 +84,128 @@ updateDateTime();
 
 // Update every second (1000 ms)
 setInterval(updateDateTime, 60000);
+
+// const theNarrows = `
+// BYBIT:1000BTTUSDT.P    
+// BYBIT:ALEOUSDT.P    
+// BYBIT:ARUSDT.P    
+// BYBIT:AVAILUSDT.P    
+// BYBIT:BATUSDT.P    
+// BYBIT:BTCUSDT.P    
+// BYBIT:CUDISUSDT.P    
+// BYBIT:KAVAUSDT.P    
+// BYBIT:KERNELUSDT.P    
+// BYBIT:LUMIAUSDT.P    
+// BYBIT:QIUSDT.P    
+// BYBIT:REQUSDT.P    
+// BYBIT:SOLVUSDT.P    
+// BYBIT:SOONUSDT.P    
+// BYBIT:USD1USDT.P    
+// BYBIT:USD1USDT.P      
+// BYBIT:USDEUSDT.P    
+// BYBIT:USDEUSDT.P      
+// BYBIT:XAUTUSDT.P    
+// BYBIT:XAUTUSDT.P      
+// `
+
+// const theExchangeSymbols = {
+//   "BLOFIN": [
+//     "1000BTTUSDT.P",
+//     "ALEOUSDT.P",
+//     "ARUSDT.P",
+//     "AVAILUSDT.P",
+//     "BATUSDT.P",
+//     "BTCUSDT.P",
+//     "CUDISUSDT.P",
+//     "KAVAUSDT.P",
+//     "KERNELUSDT.P",
+//     "QIUSDT.P",
+//     "REQUSDT.P",
+//     "SOLVUSDT.P",
+//     "SOONUSDT.P",
+//     "USD1USDT.P",
+//     "XAUTUSDT.P"
+//   ],
+//   "BYBIT": [
+//     "1000BTTUSDT.P",
+//     "ALEOUSDT.P",
+//     "ARUSDT.P",
+//     "AVAILUSDT.P",
+//     "BATUSDT.P",
+//     "BTCUSDT.P",
+//     "CUDISUSDT.P",
+//     "KAVAUSDT.P",
+//     "KERNELUSDT.P",
+//     "LUMIAUSDT.P",
+//     "QIUSDT.P",
+//     "REQUSDT.P",
+//     "SOLVUSDT.P",
+//     "SOONUSDT.P",
+//     "USD1USDT.P",
+//     "XAUTUSDT.P"
+//   ],
+//   "GATEIO": [
+//     "1000BTTUSDT.P",
+//     "ALEOUSDT.P",
+//     "ARUSDT.P",
+//     "AVAILUSDT.P",
+//     "BATUSDT.P",
+//     "XAUTUSDT.P"
+//   ],
+//   "MEXC": [
+//     "1000BTTUSDT.P",
+//     "ALEOUSDT.P",
+//     "ARUSDT.P",
+//     "QIUSDT.P",
+//     "REQUSDT.P",
+//     "SOLVUSDT.P",
+//     "SOONUSDT.P",
+//     "USD1USDT.P",
+//     "XAUTUSDT.P"
+//   ],
+//   "OKX": [
+//     "1000BTTUSDT.P",
+//     "ALEOUSDT.P",
+//     "ARUSDT.P",
+//     "AVAILUSDT.P",
+//     "BATUSDT.P",
+//     "BTCUSDT.P",
+//     "CUDISUSDT.P",
+//     "KAVAUSDT.P",
+//     "QIUSDT.P",
+//     "REQUSDT.P",
+//     "SOLVUSDT.P",
+//   ],
+//   "TOOBIT": [
+//     "1000BTTUSDT.P",
+//     "ALEOUSDT.P",
+//     "ARUSDT.P",
+//     "AVAILUSDT.P",
+//     "BATUSDT.P",
+//     "BTCUSDT.P",
+//     "CUDISUSDT.P",
+//     "KAVAUSDT.P",
+//     "KERNELUSDT.P",
+//     "QIUSDT.P",
+//     "REQUSDT.P",
+//     "SOLVUSDT.P",
+//     "SOONUSDT.P",
+//     "USD1USDT.P",
+//     "XAUTUSDT.P"
+//   ]
+// }
+
+
+// const theExchangePriorities = ["GATEIO","MEXC","OKX","TOOBIT","BINANCE","BINGX","BITGET","BITMEX","BLOFIN","BYBIT","PHEMEX","WEEX"]
+
+// const aHeader = `###REFERENCES
+// BTC.D
+// USDT.D
+// CME:BTC1!
+// ###LONG POSITIONS
+// ###LONG POSITIONS CLOSED
+// ###SHORT POSITIONS
+// ###SHORT POSITIONS CLOSED
+// ###CURIOSITIES
+// ###NARROWS
+// `

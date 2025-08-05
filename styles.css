@@ -84,12 +84,26 @@
 #drop-zone.dragover {
     background-color: #f0f8ff;
 }
+/*
 #download-link {
     display: none;
-/*    margin: 2px 0 15px;*/
     color: #39ff14;
     font-weight: bold;
     font-size: 1.5rem;
+}
+*/
+/*    margin: 2px 0 15px;*/
+
+#download-link {
+    color: #39ff14;
+    font-weight: bold;
+    font-size: 1.5rem;
+    display: block;              /* allows centering and wrapping */
+    max-width: 90%;              /* optional, limits line length */
+    margin: 0 auto;              /* centers horizontally */
+    text-align: center;          /* centers the text inside */
+    word-wrap: break-word;       /* allows wrapping long text */
+    white-space: normal;         /* ensures wrapping works */
 }
 
 

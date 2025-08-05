@@ -63,8 +63,8 @@ def write_output(data):
     out_name = f"apx_{date_tag}.json"
     # out_path = DAILY_UPDATE_DIR
     out_path = os.path.join(here, DAILY_UPDATE_DIR, out_name)
-    # with open(out_path, 'w', encoding='utf-8') as f:
-    #     json.dump(data, f, indent=2, ensure_ascii=False)
+    with open(out_path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
     return out_name
 
 def reportAssestPerExchange(grouped):

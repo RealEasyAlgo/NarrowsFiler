@@ -58,6 +58,30 @@ function resetRadioGroup() {
 }
 
 
+const getSectionsField = () => {
+  return document.getElementById("sections")
+}
+
+const getSectionsFieldValue = () => {
+    const sectionsField = getSectionsField();
+    return sectionsField.value;
+}
+
+
+
+const getExchangesField = () => {
+    return document.getElementById('exchangeContainer');
+}
+
+const getExchangesFieldValue = () => {
+    const exchangesField = getExchangesField();
+    const exchangesArray = [...exchangesField.querySelectorAll('.exchange-tile span:last-child')]
+      .map(span => span.textContent);
+    // const orderedExchanges = encodeURIComponent(JSON.stringify(ordered));
+    return exchangesArray;
+}
+
+
 const toggleTextField = () => {
     const textField = document.getElementById('namedField');
     const namedRadio = document.querySelector('input[type="radio"][value="named"]');
@@ -89,20 +113,45 @@ async function loadExchanges() {
 }
 
 
-const checkForChanges = () => {
+const checkForChanges = (stillLoading) => {
     console.log("checkForChanges()")
 
     // Retrieve existing cookies
     const exchangesCookie = getCookie(EXCHANGES_COOKIE_NAME);
+    const exchangesCookieValue = JSON.parse(exchangesCookie).join(",")
+    const exchangesNow = getExchangesFieldValue().toString();
+
+
     const sectionsCookie = getCookie(SECTIONS_COOKIE_NAME);
+    const sectionsNow = getSectionsFieldValue()
 
     const button = document.getElementById('savePrefsBtn');
+
+    button.style.display = 'none';
 
     if (!exchangesCookie || !sectionsCookie) {
         // No cookie exists, show the button
         button.style.display = 'block';
         return;
     }
+
+    if (stillLoading) return;
+
+    console.log(exchangesCookieValue);
+    console.log(exchangesNow);
+    if (exchangesCookieValue != exchangesNow) {
+        // No cookie exists, show the button
+        button.style.display = 'block';
+        return;
+    }
+
+    if (sectionsCookie != sectionsNow) {
+        // No cookie exists, show the button
+        button.style.display = 'block';
+        return;
+    }
+
+    return;
 }
 
 

@@ -13,6 +13,7 @@
         <script src="./js/utils.js" defer></script>
         <script src="./js/slideShow.js" defer></script>
         <script src="./js/convert.js" defer></script>
+        <script src="./js/transform_EA_narrows.js" defer></script>
         <!-- script src="./js/loadExchanges.js" defer></script -->
 
         <script src="./js/main.js" defer></script>
@@ -109,21 +110,23 @@
 
                             <input type="text" id="namedField" placeholder="Enter name" class="hidden-text-field" value="😘SundayParty_YYYY/MM/DD.txt" onclick="selectText(this)">
 
+                            <div id="file-container" class="file-container">
+                                <h3>Step #3 - Drop a file (or click to get a chooser)</h3>
+                                <!-- a id="download-link" download="reformatted-file.txt">Download<br/>Reformatted File</a -->
+                                <div id="drop-zone" class="container">Drag and drop a 
+                                    <br/><em>"Trend X ( Scanner )"</em>
+                                    <br/>file here, 
+                                    <br/>OR
+                                    <br/>click to upload
+                                </div>
+                                <input type="file" id="file-input" style="display: none;">
+                                <h3>Step #4 ........ </h3>
+                                <a id="download-link" download="reformatted-file.txt">Download<br/>Reformatted File</a>
+                            </div>
                         </div>
 
                     </div>
 
-                    <div id="file-container" class="file-container">
-                        <h3>Step #3 - Drop a file (or click to get a chooser)</h3>
-                        <a id="download-link" download="reformatted-file.txt">Download Reformatted File</a>
-                        <div id="drop-zone" class="container">Drag and drop a 
-                            <br/><em>"Trend X ( Scanner )"</em>
-                            <br/>file here, 
-                            <br/>OR
-                            <br/>click to upload
-                        </div>
-                        <input type="file" id="file-input" style="display: none;">
-                    </div>
 
                 </form>
                 <hl/>
@@ -202,6 +205,8 @@
                 // replaceTextareaContent(sectionsText)
 
                 showSlides();
+                checkForChanges(true);
+                toggleFileContainer(false)
 
             };
 
