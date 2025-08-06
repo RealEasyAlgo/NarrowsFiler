@@ -23,3 +23,38 @@ dropZone.addEventListener('drop', (e) => {
     if (file) handleFile({ target: { files: [file] } });
 });
 
+const ERROR = "Not a valid EX Narrows file!<br/> -- "
+function validateBybitFile(text) {
+  const lines = text.split(/\r?\n/);
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    if (line.trim() === '') continue; // Skip empty lines
+
+    if (!line.startsWith("BYBIT:")) {
+      alert(`${ERROR}Line ${i + 1} does not begin with "BYBIT:"`);
+      return;
+    }
+
+    if (line.length > 40) {
+      alert(`${ERROR}Line ${i + 1} exceeds 40 characters`);
+      return;
+    }
+
+    for (const char of line) {
+      const code = char.charCodeAt(0);
+      if (code > 127) {
+        alert(`${ERROR}Line ${i + 1} contains non-ASCII character: '${char}'`);
+        return;
+      }
+
+      if (!/[A-Za-z0-9:.]/.test(char)) {
+        alert(`${ERROR}Line ${i + 1} contains disallowed character: '${char}'`);
+        return;
+      }
+    }
+  }
+
+  // alert("File is valid");
+}
