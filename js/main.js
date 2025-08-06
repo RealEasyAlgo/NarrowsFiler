@@ -101,7 +101,8 @@ const handleFile = async (event) => {
     const { outFileName, exchangeSymbols, exchangePriorities, header } = await collectArgs()
 
     console.log(`file.name:: ${file.name}`);
-    const payload = transform_EA_narrow(narrows, exchangeSymbols, exchangePriorities, header);
+    let pyld = transform_EA_narrow(narrows, exchangeSymbols, exchangePriorities, header);
+    const payload = pyld.replace(`\n\n`, `\n`);
 
     // // // console.log(`exchange : ${exchange}`);
     // // // console.log(`theHeader : ${theHeader}`);
@@ -119,6 +120,7 @@ const handleFile = async (event) => {
     downloadLink.href = URL.createObjectURL(blob);
     downloadLink.style.display = 'block';
 
+    toggleDownloadContainer(true)
     console.log(`File has been handled`)
 }
 

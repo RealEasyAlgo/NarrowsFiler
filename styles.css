@@ -325,6 +325,11 @@ input[type="radio"] {
 }
 
 
+.download-container.hidden {
+    display: none;
+}
+
+
 /* Responsive rule: switch to stacking layout on smaller screens */
 @media (max-width: 768px) {
     .radio-container,

@@ -48,5 +48,7 @@ function transform_EA_narrow(narrows, exchange_symbols, exchange_priority, heade
         }
     }
 
-    return resultLines.join('\n');
+    let rslt = resultLines.join('\n')
+
+    return rslt.replace(/\n\s*\n+/g, '\n');
 }

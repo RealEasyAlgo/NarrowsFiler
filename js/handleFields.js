@@ -10,11 +10,21 @@
 //   // console.dir(exchange)
 //   exchange.value = value;
 // }
+function toggleDownloadContainer(visible) {
+    const downloadContainer = document.getElementById('download-container');
+    if (visible) {
+        downloadContainer.classList.remove('hidden');
+    } else {
+        downloadContainer.classList.add('hidden');
+    }
+}
+
 
 function toggleFileContainer(visible) {
     const fileContainer = document.getElementById('file-container');
     if (visible) {
         fileContainer.classList.remove('hidden');
+        toggleDownloadContainer(false)
     } else {
         fileContainer.classList.add('hidden');
     }
@@ -118,7 +128,8 @@ const checkForChanges = (stillLoading) => {
 
     // Retrieve existing cookies
     const exchangesCookie = getCookie(EXCHANGES_COOKIE_NAME);
-    const exchangesCookieValue = JSON.parse(exchangesCookie).join(",")
+    let exchangesCookieValue = null
+    if (exchangesCookie) exchangesCookieValue = JSON.parse(exchangesCookie).join(",")
     const exchangesNow = getExchangesFieldValue().toString();
 
 

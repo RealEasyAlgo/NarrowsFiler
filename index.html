@@ -119,9 +119,11 @@
                                     <br/>OR
                                     <br/>click to upload
                                 </div>
-                                <input type="file" id="file-input" style="display: none;">
-                                <h3>Step #4 ........ </h3>
-                                <a id="download-link" download="reformatted-file.txt">Download<br/>Reformatted File</a>
+                                <div id="download-container" class="download-container">
+                                    <input type="file" id="file-input" style="display: none;">
+                                    <h3>Step #4 ........ </h3>
+                                    <a id="download-link" download="reformatted-file.txt">Download<br/>Reformatted File</a>
+                                </div>
                             </div>
                         </div>
 
@@ -132,12 +134,12 @@
                 <hl/>
                 <div class="footer-container">
                     <div class="footer-links">
-                        <a href="https://www.easyalgoindicators.com/powerfriend" target="_blank">
-                            <img src="easyalgo2.png" alt="Icon" class="tiny-icon">&nbsp;&nbsp;Get started today for free
+                        <a href="https://www.easyalgoindicators.com/" target="_blank">
+                            <img src="discord-user-icon-14.jpg" alt="Icon" class="tiny-icon">&nbsp;&nbsp;Visit out Discord channels
                         </a>
-                        <a href="https://x.com/RealEasyAlgo"  target="_blank">
+                        <!-- a href="https://x.com/RealEasyAlgo"  target="_blank">
                             <img src="x.png" alt="Icon" class="tiny-icon">&nbsp;&nbsp;Follow us on X
-                        </a>
+                        </a -->
                     </div>
                 </div>
             </div>
@@ -207,6 +209,7 @@
                 showSlides();
                 checkForChanges(true);
                 toggleFileContainer(false)
+                resetRadioGroup()
 
             };
 
