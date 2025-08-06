@@ -209,8 +209,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (e.target.matches('.exchange-tile')) {
       e.target.classList.remove('dragging');
       draggingEl = null;
+      // checkForChanges()
     }
   });
+
   exchanges.addEventListener('dragover', e => {
     e.preventDefault();
     if (!draggingEl) return;
@@ -220,6 +222,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       exchanges.insertBefore(draggingEl, after);
     }
+    checkForChanges()
   });
 
   function getDragAfterElement(exchanges, y) {
