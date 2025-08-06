@@ -26,7 +26,8 @@ function transform_EA_narrow(narrows, exchange_symbols, exchange_priority, heade
     }
 
     // Start with the unmodified header
-    const headerLines = header.replace(/\n+$/, '').split('\n');
+    let hdr = header.replace(/\s+$/, '').replace(/\n\s*\n+/g, '\n')
+    const headerLines = hdr.split('\n');
     const resultHeader = [];
 
     for (const line of headerLines) {
