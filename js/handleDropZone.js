@@ -34,27 +34,27 @@ function validateBybitFile(text) {
 
     if (!line.startsWith("BYBIT:")) {
       alert(`${ERROR}Line ${i + 1} does not begin with "BYBIT:"`);
-      return;
+      return false;
     }
 
     if (line.length > 40) {
       alert(`${ERROR}Line ${i + 1} exceeds 40 characters`);
-      return;
+      return false;
     }
 
     for (const char of line) {
       const code = char.charCodeAt(0);
       if (code > 127) {
         alert(`${ERROR}Line ${i + 1} contains non-ASCII character: '${char}'`);
-        return;
+        return false;
       }
 
       if (!/[A-Za-z0-9:.]/.test(char)) {
         alert(`${ERROR}Line ${i + 1} contains disallowed character: '${char}'`);
-        return;
+        return false;
       }
     }
   }
 
-  // alert("File is valid");
+  return true;
 }

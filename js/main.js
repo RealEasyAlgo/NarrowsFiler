@@ -95,10 +95,9 @@ const handleFile = async (event) => {
     if (!file) return;
 
     const text = await file.text(); // Read the file content
-    const narrows = text.toUpperCase(); // Example processing: convert to uppercase
+    const narrows = text.split('\n').map(line => line.trimEnd()).join('\n').toUpperCase();
 
-    validateBybitFile(narrows)
-
+    if (!validateBybitFile(narrows)) return;
 
     // const { exchange, trendX, theHeader, namedFieldValue, payload } = collectArgs(text)
     const { outFileName, exchangeSymbols, exchangePriorities, header } = await collectArgs()
