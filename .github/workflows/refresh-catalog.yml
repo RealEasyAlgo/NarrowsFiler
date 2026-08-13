@@ -84,17 +84,27 @@ jobs:
       - name: Warn Telegram when KEEPALIVE_PAT nears expiry
         if: always()
         env:
-          PAT_EXPIRES: '2027-08-13'   # BUMP THIS whenever you rotate KEEPALIVE_PAT
+          KEEPALIVE_PAT: ${{ secrets.KEEPALIVE_PAT }}
           TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TG_CHAT:  ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          days=$(( ( $(date -u -d "$PAT_EXPIRES" +%s) - $(date -u +%s) ) / 86400 ))
-          echo "KEEPALIVE_PAT expires $PAT_EXPIRES -> ${days} day(s) away"
+          # Ask GitHub when THIS token actually expires (self-updating across
+          # every future rotation — no hardcoded date to maintain).
+          exp=$(curl -sI -H "Authorization: Bearer ${KEEPALIVE_PAT}" \
+                  "https://api.github.com/repos/${{ github.repository }}" \
+                | tr -d '\r' \
+                | awk -F': ' 'tolower($1)=="github-authentication-token-expiration"{print $2}')
+          if [ -z "$exp" ]; then
+            echo "No token-expiration header returned (token may be non-expiring) — no reminder."
+            exit 0
+          fi
+          days=$(( ( $(date -u -d "$exp" +%s) - $(date -u +%s) ) / 86400 ))
+          echo "KEEPALIVE_PAT expires $exp -> ${days} day(s) away"
           if [ "$days" -gt 14 ]; then exit 0; fi
           if [ "$days" -ge 0 ]; then
-            msg="⚠️ NarrowsFiler: KEEPALIVE_PAT expires in ${days} day(s) (${PAT_EXPIRES}). Rotate it now — see HOW_TO_REFRESH_THE_TOKEN__KEEPALIVE_PAT.txt in the repo."
+            msg="⚠️ NarrowsFiler: KEEPALIVE_PAT expires in ${days} day(s) (${exp}). Rotate it now — see HOW_TO_REFRESH_THE_TOKEN__KEEPALIVE_PAT.txt in the repo."
           else
-            msg="🚨 NarrowsFiler: KEEPALIVE_PAT EXPIRED ${days#-} day(s) ago (${PAT_EXPIRES}). The daily catalog refresh can no longer push until you rotate it — see HOW_TO_REFRESH_THE_TOKEN__KEEPALIVE_PAT.txt."
+            msg="🚨 NarrowsFiler: KEEPALIVE_PAT EXPIRED ${days#-} day(s) ago (${exp}). The daily catalog refresh can no longer push until you rotate it — see HOW_TO_REFRESH_THE_TOKEN__KEEPALIVE_PAT.txt."
           fi
           resp=$(curl -s -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
                  -d chat_id="${TG_CHAT}" --data-urlencode "text=${msg}")

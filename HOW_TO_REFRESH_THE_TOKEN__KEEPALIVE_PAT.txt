@@ -29,10 +29,10 @@ Fine-grained PATs last at most 1 year.
   * It therefore expires around ..... 2027-08-13   <-- ROTATE BEFORE THIS DATE
 
 HOW YOU'LL BE REMINDED / KNOW IT HAS EXPIRED
-  - ADVANCE WARNING: for the 14 days BEFORE the PAT_EXPIRES date below, the
-    daily workflow sends a Telegram nag telling you to rotate (and to read this
-    file). This is driven by the PAT_EXPIRES value in the workflow, so keep it
-    accurate (see Step 2).
+  - ADVANCE WARNING: the daily workflow reads the token's real expiry date from
+    GitHub and, for the 14 days BEFORE it expires, sends a Telegram nag telling
+    you to rotate (and to read this file). No date to maintain - it just knows,
+    for this rotation and every future one.
   - GitHub also emails a reminder shortly before a fine-grained PAT expires.
   - AFTER it expires: the workflow run turns RED and you get a Telegram alert
     (the failure() step) saying the refresh failed.
@@ -80,15 +80,9 @@ Option B - web UI:
       -> find KEEPALIVE_PAT -> "Update"
       -> paste the new value -> Update secret
 
-You do NOT need to change any other secret.
-
-IMPORTANT - also bump the expiry date in the workflow so the advance-warning
-reminder stays accurate. Edit .github/workflows/refresh-catalog.yml, find:
-
-    PAT_EXPIRES: '2027-08-13'   # BUMP THIS whenever you rotate KEEPALIVE_PAT
-
-and set it to the NEW token's expiry date, then commit and push. (This is the
-line that makes Telegram nag you daily for the 14 days before expiry.)
+You do NOT need to change the workflow file or any other secret. The advance-
+warning reminder reads the new token's expiry date automatically from GitHub,
+so there is nothing to update by hand.
 
 
 ================================================================================
