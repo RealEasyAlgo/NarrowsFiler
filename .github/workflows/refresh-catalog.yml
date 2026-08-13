@@ -1,28 +1,51 @@
 name: Refresh asset catalog
 
 # Regenerates AssetsPerExchange.json from the TradingView scanner and commits it
-# back to the repo. GitHub Pages redeploys automatically on the resulting push.
+# back to the repo (GitHub Pages redeploys on the push).
+#
+# Keepalive: GitHub auto-disables scheduled workflows after 60 days with no
+# activity from a *real* actor — commits pushed by the built-in GITHUB_TOKEN do
+# NOT count. So every push here authenticates with KEEPALIVE_PAT (a fine-grained
+# PAT), which does count. On the rare stretch where the catalog is unchanged for
+# 50+ days we make an empty commit so the 60-day clock never runs out.
+# Telegram is only pinged if the run FAILS (e.g. the PAT expired) — the one case
+# needing a human.
 
 on:
   schedule:
-    # Daily at 06:17 UTC. Off-the-hour to reduce GitHub's scheduled-run delay.
-    - cron: '17 6 * * *'
-  workflow_dispatch: {}   # allow manual "Run workflow" from the Actions tab
+    - cron: '17 6 * * *'   # daily, 06:17 UTC (off-the-hour to dodge scheduler lag)
+  workflow_dispatch:
+    inputs:
+      force_keepalive:
+        description: 'Force a keepalive commit — tests the PAT push / kicks the 60-day timer on demand'
+        type: boolean
+        default: false
 
-# Never run two refreshes at once.
 concurrency:
   group: refresh-catalog
   cancel-in-progress: false
 
+# GITHUB_TOKEN only needs read; all writes are pushed via KEEPALIVE_PAT.
 permissions:
-  contents: write   # needed for GITHUB_TOKEN to push the updated catalog
+  contents: read
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repo
+      - name: Check out repo (auth as PAT so pushes reset the 60-day timer)
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.KEEPALIVE_PAT }}
+
+      - name: Measure branch idle age
+        id: age
+        run: |
+          last=$(git log -1 --format=%cI)
+          days=$(( ( $(date -u +%s) - $(date -u -d "$last" +%s) ) / 86400 ))
+          echo "Last commit $last -> ${days} day(s) ago"
+          if [ "$days" -ge 50 ]; then echo "stale=true"  >> "$GITHUB_OUTPUT"
+          else                        echo "stale=false" >> "$GITHUB_OUTPUT"; fi
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -35,14 +58,36 @@ jobs:
       - name: Regenerate catalog
         run: python3 AssetsPerExchange.py
 
-      - name: Commit if the catalog changed
+      - name: Commit refreshed catalog if it changed
+        id: refresh
         run: |
+          git config user.name  "narrowsfiler-bot"
+          git config user.email "actions@users.noreply.github.com"
           if git diff --quiet -- AssetsPerExchange.json; then
-            echo "No change in AssetsPerExchange.json — nothing to commit."
-            exit 0
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No catalog change."
+          else
+            git add AssetsPerExchange.json
+            git commit -m "chore: refresh asset catalog ($(date -u +%Y-%m-%d))"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
-          git config user.name  "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add AssetsPerExchange.json
-          git commit -m "chore: refresh asset catalog ($(date -u +%Y-%m-%d))"
+
+      - name: Keepalive commit if the branch has been idle 50+ days
+        if: steps.refresh.outputs.changed == 'false' && (steps.age.outputs.stale == 'true' || github.event.inputs.force_keepalive == 'true')
+        run: |
+          git config user.name  "narrowsfiler-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git commit --allow-empty -m "chore: keepalive — reset scheduled-workflow 60-day timer"
           git push
+
+      - name: Alert Telegram on failure
+        if: failure()
+        env:
+          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT:  ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          msg="🚨 NarrowsFiler catalog refresh FAILED (run ${{ github.run_id }}). The keepalive push may not have happened — check Actions. If KEEPALIVE_PAT expired, the 60-day auto-disable clock is now running: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          resp=$(curl -s -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
+                 -d chat_id="${TG_CHAT}" --data-urlencode "text=${msg}")
+          echo "$resp" | grep -q '"ok":true' || { echo "Telegram send failed: $resp"; exit 1; }
