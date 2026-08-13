@@ -28,9 +28,11 @@ function validateBybitFile(text) {
   const lines = text.split(/\r?\n/);
 
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
+    const line = lines[i].trim(); // Tolerate leading/trailing whitespace
 
-    if (line.trim() === '') continue; // Skip empty lines
+    if (line === '') continue; // Skip empty lines
+
+    if (line.startsWith("###")) continue; // Section divider — allowed
 
     if (!line.startsWith("BYBIT:")) {
       alert(`${ERROR}Line ${i + 1} does not begin with "BYBIT:"`);
