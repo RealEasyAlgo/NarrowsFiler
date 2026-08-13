@@ -1,5 +1,5 @@
 {
-  "dependencies": {
-    "browser-sync": "^3.0.4"
+  "devDependencies": {
+    "servor": "^4.0.2"
   }
 }

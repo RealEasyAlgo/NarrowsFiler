@@ -1,1 +1,1 @@
-npx browser-sync start --server --files "*.css, *.html, ./js/*.js"
+npx servor . index.html 3000 --reload --browse
