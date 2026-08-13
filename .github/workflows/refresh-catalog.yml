@@ -20,6 +20,10 @@ on:
         description: 'Force a keepalive commit — tests the PAT push / kicks the 60-day timer on demand'
         type: boolean
         default: false
+      simulate_failure:
+        description: 'TEMP: force the job to fail, to test the Telegram alert path'
+        type: boolean
+        default: false
 
 concurrency:
   group: refresh-catalog
@@ -37,6 +41,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.KEEPALIVE_PAT }}
+
+      - name: (temp) simulate a failure to test the Telegram alert
+        if: ${{ github.event.inputs.simulate_failure == 'true' }}
+        run: |
+          echo "Deliberately failing to exercise the failure() Telegram alert."
+          exit 1
 
       - name: Measure branch idle age
         id: age
