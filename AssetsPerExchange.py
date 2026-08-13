@@ -61,8 +61,9 @@ def write_output(data):
     here = os.path.dirname(__file__)
     date_tag = datetime.now().strftime("%y%m%d")
     out_name = f"apx_{date_tag}.json"
-    # out_path = DAILY_UPDATE_DIR
-    out_path = os.path.join(here, DAILY_UPDATE_DIR, out_name)
+    out_dir = os.path.join(here, DAILY_UPDATE_DIR)
+    os.makedirs(out_dir, exist_ok=True)  # scratch dir is gitignored; create if absent
+    out_path = os.path.join(out_dir, out_name)
     with open(out_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
     return out_name
