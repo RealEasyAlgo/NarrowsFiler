@@ -1,0 +1,128 @@
+================================================================================
+ HOW TO REFRESH THE TOKEN: KEEPALIVE_PAT
+================================================================================
+
+WHAT THIS TOKEN IS
+------------------
+KEEPALIVE_PAT is a GitHub fine-grained Personal Access Token stored as a repo
+secret. The scheduled workflow ".github/workflows/refresh-catalog.yml" uses it
+to PUSH its commits (the daily AssetsPerExchange.json refresh, and any keepalive
+commit).
+
+WHY IT MATTERS
+--------------
+GitHub auto-disables a scheduled workflow after 60 days with no activity from a
+*real* account. Commits pushed by the built-in GITHUB_TOKEN do NOT count.
+Pushing with this PAT DOES count, so it keeps the daily refresh alive.
+
+If this token expires (or is revoked), the workflow can no longer push:
+  - the catalog stops updating, and
+  - the 60-day auto-disable clock starts ticking.
+
+
+================================================================================
+ WHEN TO REFRESH
+================================================================================
+Fine-grained PATs last at most 1 year.
+
+  * This token was created on ...... 2026-08-13
+  * It therefore expires around ..... 2027-08-13   <-- ROTATE BEFORE THIS DATE
+
+HOW YOU'LL BE REMINDED / KNOW IT HAS EXPIRED
+  - ADVANCE WARNING: for the 14 days BEFORE the PAT_EXPIRES date below, the
+    daily workflow sends a Telegram nag telling you to rotate (and to read this
+    file). This is driven by the PAT_EXPIRES value in the workflow, so keep it
+    accurate (see Step 2).
+  - GitHub also emails a reminder shortly before a fine-grained PAT expires.
+  - AFTER it expires: the workflow run turns RED and you get a Telegram alert
+    (the failure() step) saying the refresh failed.
+
+
+================================================================================
+ STEP 1 - CREATE A NEW FINE-GRAINED PAT
+================================================================================
+In the GitHub web UI:
+
+  1. Top-right avatar  ->  Settings
+  2. Left sidebar (bottom)  ->  Developer settings
+  3. Personal access tokens  ->  Fine-grained tokens  ->  Generate new token
+  4. Fill in:
+       Token name .......... narrowsfiler-catalog-keepalive
+       Expiration .......... 1 year (the maximum)
+       Resource owner ...... RealEasyAlgo
+       Repository access ... Only select repositories
+                             -> check  RealEasyAlgo/NarrowsFiler
+       Permissions ......... Repository permissions -> Contents = Read and write
+                             (Metadata: Read is added automatically - leave it;
+                              nothing else is needed)
+  5. Click "Generate token".
+  6. COPY the github_pat_... string now. It is shown ONLY ONCE.
+
+  NOTE: if RealEasyAlgo is an ORGANISATION, the org may need to allow
+  fine-grained PATs and APPROVE this token before it works
+  (Org -> Settings -> Personal access tokens). If pushes still 403 after
+  updating the secret, this approval is the likely reason.
+
+
+================================================================================
+ STEP 2 - UPDATE THE REPO SECRET
+================================================================================
+The secret NAME stays the same (KEEPALIVE_PAT); only its value changes.
+
+Option A - command line (token is not echoed or saved to shell history):
+
+    gh secret set KEEPALIVE_PAT
+    # paste the new github_pat_... value at the prompt, press Enter
+
+Option B - web UI:
+
+    Repo -> Settings -> Secrets and variables -> Actions
+      -> find KEEPALIVE_PAT -> "Update"
+      -> paste the new value -> Update secret
+
+You do NOT need to change any other secret.
+
+IMPORTANT - also bump the expiry date in the workflow so the advance-warning
+reminder stays accurate. Edit .github/workflows/refresh-catalog.yml, find:
+
+    PAT_EXPIRES: '2027-08-13'   # BUMP THIS whenever you rotate KEEPALIVE_PAT
+
+and set it to the NEW token's expiry date, then commit and push. (This is the
+line that makes Telegram nag you daily for the 14 days before expiry.)
+
+
+================================================================================
+ STEP 3 - TEST THAT THE NEW TOKEN WORKS
+================================================================================
+Force a run that actually pushes, so the PAT's write access is exercised:
+
+    gh workflow run refresh-catalog.yml -f force_keepalive=true
+
+Then check it went green:
+
+    gh run list --workflow=refresh-catalog.yml --limit 1
+    gh run watch <RUN_ID>            # RUN_ID from the line above
+
+Or in the browser: Actions tab -> "Refresh asset catalog" -> latest run.
+
+SUCCESS looks like:
+  - the run is GREEN, and
+  - a new commit by "narrowsfiler-bot" appears on main
+    (a "keepalive" commit, or a "refresh asset catalog" commit).
+
+FAILURE looks like:
+  - the run is RED and you get a Telegram alert.
+    Most likely causes: token not yet approved by the org (see Step 1 note),
+    wrong Contents permission, or the value was pasted with a stray space.
+
+
+================================================================================
+ QUICK REFERENCE
+================================================================================
+  Secret name ......... KEEPALIVE_PAT
+  Token type .......... GitHub fine-grained PAT
+  Scope ............... repo RealEasyAlgo/NarrowsFiler, Contents: Read and write
+  Used by ............. .github/workflows/refresh-catalog.yml
+  Manual test ......... gh workflow run refresh-catalog.yml -f force_keepalive=true
+  Also rotate? ........ No - Telegram secrets are separate and don't expire.
+================================================================================

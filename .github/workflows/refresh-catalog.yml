@@ -81,6 +81,25 @@ jobs:
           git commit --allow-empty -m "chore: keepalive — reset scheduled-workflow 60-day timer"
           git push
 
+      - name: Warn Telegram when KEEPALIVE_PAT nears expiry
+        if: always()
+        env:
+          PAT_EXPIRES: '2027-08-13'   # BUMP THIS whenever you rotate KEEPALIVE_PAT
+          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT:  ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          days=$(( ( $(date -u -d "$PAT_EXPIRES" +%s) - $(date -u +%s) ) / 86400 ))
+          echo "KEEPALIVE_PAT expires $PAT_EXPIRES -> ${days} day(s) away"
+          if [ "$days" -gt 14 ]; then exit 0; fi
+          if [ "$days" -ge 0 ]; then
+            msg="⚠️ NarrowsFiler: KEEPALIVE_PAT expires in ${days} day(s) (${PAT_EXPIRES}). Rotate it now — see HOW_TO_REFRESH_THE_TOKEN__KEEPALIVE_PAT.txt in the repo."
+          else
+            msg="🚨 NarrowsFiler: KEEPALIVE_PAT EXPIRED ${days#-} day(s) ago (${PAT_EXPIRES}). The daily catalog refresh can no longer push until you rotate it — see HOW_TO_REFRESH_THE_TOKEN__KEEPALIVE_PAT.txt."
+          fi
+          resp=$(curl -s -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
+                 -d chat_id="${TG_CHAT}" --data-urlencode "text=${msg}")
+          echo "$resp" | grep -q '"ok":true' || { echo "Telegram send failed: $resp"; exit 1; }
+
       - name: Alert Telegram on failure
         if: failure()
         env:
